@@ -69,15 +69,18 @@ func plot_sites_random(vst_node: VSTNode):
 		#				randf_range(min_vec.y + 0.0*(max_vec.y-min_vec.y),max_vec.y - 0.0*(max_vec.y-min_vec.y)),
 		#				randf_range(min_vec.z + 0.45*(max_vec.z-min_vec.z),max_vec.z - 0.45*(max_vec.z-min_vec.z)))
 		
-		site = Vector3(randfn((max_vec.x + min_vec.x)/2.0, 0.1),
-					   randfn((max_vec.y + min_vec.y)/2.0, 0.1),
-					   randfn((max_vec.z + min_vec.z)/2.0, 0.1))
+		site = Vector3(randfn((max_vec.x + min_vec.x)/2.0, 0.01),
+					   0, #randfn((max_vec.y + min_vec.y)/2.0, 0.01),
+					   0) #randfn((max_vec.z + min_vec.z)/2.0, 0.01))
 		var num_intersections = 0
 		for tri in range(mdt.get_face_count()):
 			var face_v_ids = [mdt.get_face_vertex(tri,0),mdt.get_face_vertex(tri,1),mdt.get_face_vertex(tri,2)]
 			var verts = [mdt.get_vertex(face_v_ids[0]),mdt.get_vertex(face_v_ids[1]),mdt.get_vertex(face_v_ids[2])]
-			if(Geometry3D.ray_intersects_triangle(site, Vector3.UP, verts[0], verts[1], verts[2])):
-				num_intersections += 1
+			var intersection_point = Geometry3D.ray_intersects_triangle(site, Vector3.UP, verts[0], verts[1], verts[2])
+			
+			if(intersection_point != null):
+				if(intersection_point.distance_to(site) < 1.0):
+					num_intersections += 1
 		
 		if(num_intersections == 1):
 			#print("hit! site plotted")
@@ -88,12 +91,10 @@ func plot_sites_random(vst_node: VSTNode):
 func bisect(vst_node: VSTNode):
 	
 	# Colors for the new geometry
-	var color_purple := Color(0.3,0.2,1)
-	var color_red := Color(1,0,0)
-	#ar color_green := Color(0,
-	#var color_pink := Color.PINK
-	var outer_colors = [Color.PURPLE, Color.VIOLET, Color.SKY_BLUE, Color.BLUE_VIOLET]
-	var color_yellow := Color(1,1,0)
+	#var outer_colors = [Color.PURPLE, Color.VIOLET, Color.SKY_BLUE, Color.BLUE_VIOLET]
+	var outer_colors = [Color.DARK_RED]
+	var color_yellow := (Color.LIGHT_YELLOW + Color(1,1,0))/2.0
+	
 	
 	if vst_node.get_site_count() != 2 :
 		return "Bisection aborted! Must have exactly 2 sites"
