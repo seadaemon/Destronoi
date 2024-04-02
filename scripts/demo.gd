@@ -5,6 +5,7 @@ var base_object: RigidBody3D
 var weak_ref;
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	
 	destroy_button = get_node("UI/HBoxContainer/Button")
@@ -22,6 +23,9 @@ func _process(delta):
 			get_viewport().debug_draw = Viewport.DEBUG_DRAW_DISABLED
 		else:
 			get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+
+	if(Input.is_action_just_pressed("pause_key")):
+		get_tree().paused = !get_tree().paused
 
 	if(Input.is_action_just_pressed("ui_up")):
 		get_tree().reload_current_scene()
@@ -95,7 +99,10 @@ func on_destroy_button_up():
 		
 		for x in range(endpoints.size()):
 			estim_dir += endpoints[x]
-		estim_dir /= endpoints.size()
+			
+		if(endpoints.size() > 0):
+			estim_dir /= endpoints.size()
+		
 		estim_dir = estim_dir.normalized()
 		new_body.set_axis_velocity(5.0 * estim_dir)
 		#print(estim_dir)
@@ -121,4 +128,3 @@ func on_destroy_button_up():
 	
 	#print(vst_root._sites)
 	base_object.free()
-	

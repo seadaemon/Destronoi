@@ -1,4 +1,5 @@
 shader_type spatial;
+render_mode diffuse_toon;
 
 const vec3 red = vec3(1,0,0);
 const vec3 green = vec3(0,1,0);
