@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxa6qvwct6egu"]
+
+[ext_resource type="ArrayMesh" uid="uid://b0px1utqqp58w" path="res://assets/textured_cube.obj" id="1_pg0gp"]
+[ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_7c4d1"]
+[ext_resource type="Script" path="res://scripts/Destronoi.gd" id="3_skiwi"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f5qce"]
+render_priority = 0
+shader = ExtResource("2_7c4d1")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qsh1u"]
+size = Vector3(2, 2, 2)
+
+[node name="Cube" type="RigidBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_pg0gp")
+surface_material_override/0 = SubResource("ShaderMaterial_f5qce")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_qsh1u")
+
+[node name="Destronoi" type="Node" parent="."]
+script = ExtResource("3_skiwi")
