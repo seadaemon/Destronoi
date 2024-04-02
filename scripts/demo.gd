@@ -10,9 +10,9 @@ func _ready():
 	destroy_button = get_node("UI/HBoxContainer/Button")
 	destroy_button.connect("button_up", on_destroy_button_up)
 
-	var demo_objects = [get_node("Cube"), get_node("Sphere")]
+	var demo_objects = [get_node("Sphere")]
 	#base_object = get_node("Cube")
-	base_object = demo_objects[1]
+	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -60,7 +60,7 @@ func on_destroy_button_up():
 		#print(base_object.position)
 		new_body.position = base_object.position
 		
-		new_body.set_axis_velocity(Vector3(randf_range(-3,3),randf_range(4,7),randf_range(-3,3)))
+		#new_body.set_axis_velocity(Vector3(randf_range(-3,3),randf_range(4,7),randf_range(-3,3)))
 		
 		
 		var new_mesh_instance = vst_leaves[vst_leaf]._mesh_instance
@@ -79,7 +79,27 @@ func on_destroy_button_up():
 		#new_collision_shape.shape = new_body_mesh_instance.mesh.create_trimesh_shape()
 		#new_body_mesh_instance.mesh.get_aabb().get_center()
 		#new_body.set_axis_velocity(Vector3(randf_range(-3,3),randf_range(4,7),randf_range(-3,3)))
-		new_body.set_axis_velocity(new_body_mesh_instance.mesh.get_aabb().end - base_object.global_position)
+		var velocity_dir = new_body_mesh_instance.mesh.get_aabb().position - base_object.global_position;
+		
+		new_body.center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
+		new_body.center_of_mass = new_body_mesh_instance.mesh.get_aabb().get_center()
+		new_body.mass = new_body_mesh_instance.mesh.get_aabb().get_volume()
+		var endpoints = []
+		var estim_dir = Vector3(0,0,0)
+		var last_dot = 0;
+		for i in range(8):
+			var current_endpoint = new_body_mesh_instance.mesh.get_aabb().get_endpoint(i)
+			var current_dot = current_endpoint.dot(base_object.global_position)
+			if current_dot > 0.0:
+				endpoints.append(current_endpoint)
+		
+		for x in range(endpoints.size()):
+			estim_dir += endpoints[x]
+		estim_dir /= endpoints.size()
+		estim_dir = estim_dir.normalized()
+		new_body.set_axis_velocity(5.0 * estim_dir)
+		#print(estim_dir)
+		#new_body.set_axis_velocity(10.0  * velocity_dir.normalized())
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		new_body.add_child(new_collision_shape)
 		#var colsh = new_body.get_node("CollisionShape3D")

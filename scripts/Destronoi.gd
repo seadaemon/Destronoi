@@ -29,7 +29,7 @@ func _ready():
 	
 	# generate 2^{n+1} pieces
 	# dont go above 4 unless you want to crash
-	var n = 2
+	var n = 1
 	
 	for i in range(n):
 		var leaves = []
@@ -68,7 +68,9 @@ func plot_sites_random(vst_node: VSTNode):
 		site = Vector3(randf_range(min_vec.x + 0.45*(max_vec.x-min_vec.x),max_vec.x - 0.45*(max_vec.x-min_vec.x)),
 						randf_range(min_vec.y + 0.0*(max_vec.y-min_vec.y),max_vec.y - 0.0*(max_vec.y-min_vec.y)),
 						randf_range(min_vec.z + 0.45*(max_vec.z-min_vec.z),max_vec.z - 0.45*(max_vec.z-min_vec.z)))
-		
+		#site = Vector3(randfn((max_vec.x + min_vec.x)/2.0, 0.1),
+		#			   0,
+		#			   randfn((max_vec.z + min_vec.z)/2.0, 0.1))
 		var num_intersections = 0
 		for tri in range(mdt.get_face_count()):
 			var face_v_ids = [mdt.get_face_vertex(tri,0),mdt.get_face_vertex(tri,1),mdt.get_face_vertex(tri,2)]

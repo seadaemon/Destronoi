@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://di10mvy7c74do"]
+[gd_scene load_steps=7 format=3 uid="uid://di10mvy7c74do"]
 
 [ext_resource type="Script" path="res://scripts/demo.gd" id="1_3y721"]
 [ext_resource type="PackedScene" uid="uid://ba0u840pa5233" path="res://scenes/ui.tscn" id="1_aqc1r"]
-[ext_resource type="PackedScene" uid="uid://cxa6qvwct6egu" path="res://scenes/cube.tscn" id="1_sr3y2"]
 [ext_resource type="Script" path="res://scripts/Camera3D.gd" id="3_cv6yu"]
-[ext_resource type="PackedScene" uid="uid://d37qh7bef0ru5" path="res://scenes/sphere.tscn" id="5_kjhn5"]
+[ext_resource type="PackedScene" uid="uid://d37qh7bef0ru5" path="res://scenes/sphere.tscn" id="4_oe3ys"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_qskav"]
 size = Vector3(10, 1, 10)
@@ -35,8 +34,5 @@ mesh = SubResource("BoxMesh_qskav")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_2opyn")
 
-[node name="Cube" parent="." instance=ExtResource("1_sr3y2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.08599, 1.74145, 0)
-
-[node name="Sphere" parent="." instance=ExtResource("5_kjhn5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.192342, 1.57108, 0)
+[node name="Sphere" parent="." instance=ExtResource("4_oe3ys")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.77573, 0)
