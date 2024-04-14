@@ -3,13 +3,13 @@
 [ext_resource type="Script" path="res://scripts/demo.gd" id="1_3y721"]
 [ext_resource type="PackedScene" uid="uid://ba0u840pa5233" path="res://scenes/ui.tscn" id="1_aqc1r"]
 [ext_resource type="Script" path="res://scripts/Camera3D.gd" id="3_cv6yu"]
-[ext_resource type="PackedScene" uid="uid://d37qh7bef0ru5" path="res://scenes/sphere.tscn" id="4_oe3ys"]
+[ext_resource type="PackedScene" uid="uid://dxiw8aitb7lr3" path="res://scenes/cylinder.tscn" id="4_6gkep"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_qskav"]
-size = Vector3(10, 1, 10)
+size = Vector3(20, 1, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2opyn"]
-size = Vector3(10, 1, 10)
+size = Vector3(20, 1, 20)
 
 [node name="Demo" type="Node3D"]
 script = ExtResource("1_3y721")
@@ -17,8 +17,8 @@ script = ExtResource("1_3y721")
 [node name="UI" parent="." instance=ExtResource("1_aqc1r")]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.608761, 0.793353, 0, -0.793353, 0.608761, 0, 7.155, 5)
-fov = 74.5
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 12.5, 10)
+fov = 61.6
 size = 10.278
 script = ExtResource("3_cv6yu")
 
@@ -34,5 +34,5 @@ mesh = SubResource("BoxMesh_qskav")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_2opyn")
 
-[node name="Sphere" parent="." instance=ExtResource("4_oe3ys")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.77573, 0)
+[node name="Cylinder" parent="." instance=ExtResource("4_6gkep")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55945, 0)

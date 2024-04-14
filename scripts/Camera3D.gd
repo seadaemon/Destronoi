@@ -1,8 +1,7 @@
 class_name FreeLookCamera extends Camera3D
 
-### Camera movement script provided by 
+### Camera movement script provided by richardhyy on GitHub
 ### https://github.com/richardhyy/simple-free-look-camera-4/blob/master/camera.gd
-###
 
 # Modifier keys' speed multiplier
 const SHIFT_MULTIPLIER = 2.5

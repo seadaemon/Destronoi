@@ -1,8 +1,7 @@
 class_name VSTNode
 """
-Author: 
-	George Power 
-	<georgepower@cmail.carleton.ca>
+Author: George Power
+		<georgepower@cmail.carleton.ca>
 """
 ## A node in a Voronoi Subdivision Tree
 ##

@@ -11,8 +11,11 @@ const vec3 colors[3] = {yellow, yellow, yellow};
 varying vec3 v_col;
 void vertex() {
 	// Called for every vertex the material is visible on.
-	v_col = colors[VERTEX_ID % 3];
+	//v_col = colors[VERTEX_ID % 3];
 	v_col = COLOR.rgb;
+	if(v_col == vec3(1,1,1)){
+		v_col = vec3(0.37,0.47,0.47);
+	}
 }
 
 void fragment() {

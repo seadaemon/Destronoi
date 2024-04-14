@@ -29,7 +29,7 @@ func _ready():
 	
 	# generate 2^{n+1} pieces
 	# dont go above 4 unless you want to crash
-	var n = 3
+	var n = 2
 	
 	for i in range(n):
 		var leaves = []
@@ -63,15 +63,25 @@ func plot_sites_random(vst_node: VSTNode):
 	var min_vec : Vector3 = aabb.position
 	var max_vec : Vector3 = aabb.end
 	
+	# Distribution profiles
+	var avg_x = (max_vec.x + min_vec.x)/2.0
+	var avg_y = (max_vec.y + min_vec.y)/2.0
+	var avg_z = (max_vec.z + min_vec.z)/2.0
+	
+	#var dist_profile = []
+	#var x_even_cut = Vector3(randfn(avg_x, 0.01),0,0)
+	#var y_even_cut = Vector3(randfn(avg_y,0.01),0,0)
+	#var z_even_cut = Vector3(randfn(avg_z,0.01),0,0)
+	#var min_cut = Vector3()
+	#dist_profile = [x_even_cut, y_even_cut, z_even_cut]
+	
 	# keep generating sites until they are within the mesh
 	while vst_node._sites.size() < 2:
-		#site = Vector3(randf_range(min_vec.x + 0.45*(max_vec.x-min_vec.x),max_vec.x - 0.45*(max_vec.x-min_vec.x)),
-		#				randf_range(min_vec.y + 0.0*(max_vec.y-min_vec.y),max_vec.y - 0.0*(max_vec.y-min_vec.y)),
-		#				randf_range(min_vec.z + 0.45*(max_vec.z-min_vec.z),max_vec.z - 0.45*(max_vec.z-min_vec.z)))
 		
-		site = Vector3(randfn((max_vec.x + min_vec.x)/2.0, 0.01),
-					   0, #randfn((max_vec.y + min_vec.y)/2.0, 0.01),
-					   0) #randfn((max_vec.z + min_vec.z)/2.0, 0.01))
+		
+		site = Vector3(randfn(avg_x, 0.1),randfn(avg_y, 0.1),randfn(avg_z, 0.1)) # randfn(avg_z, 0.05)
+		
+		
 		var num_intersections = 0
 		for tri in range(mdt.get_face_count()):
 			var face_v_ids = [mdt.get_face_vertex(tri,0),mdt.get_face_vertex(tri,1),mdt.get_face_vertex(tri,2)]
@@ -79,12 +89,18 @@ func plot_sites_random(vst_node: VSTNode):
 			var intersection_point = Geometry3D.ray_intersects_triangle(site, Vector3.UP, verts[0], verts[1], verts[2])
 			
 			if(intersection_point != null):
-				if(intersection_point.distance_to(site) < 1.0):
-					num_intersections += 1
+				num_intersections += 1
 		
 		if(num_intersections == 1):
 			#print("hit! site plotted")
 			vst_node._sites.append(site)
+		
+		#if(vst_node._sites.size() == 2):
+			#var site_vec :Vector3 = vst_node._sites[0] - vst_node._sites[1]
+			
+			#if abs(site_vec.dot(aabb.get_center())) > 0.0001 :
+			#	vst_node._sites = []
+				
 
 ## Bisect the mesh of a VSTNode. Will return an error if there are fewer than 2 sites
 ## Will overrite children if they already exist
@@ -94,7 +110,7 @@ func bisect(vst_node: VSTNode):
 	#var outer_colors = [Color.PURPLE, Color.VIOLET, Color.SKY_BLUE, Color.BLUE_VIOLET]
 	var outer_colors = [Color.DARK_RED]
 	var color_yellow := (Color.LIGHT_YELLOW + Color(1,1,0))/2.0
-	
+	#var color_yellow = 
 	
 	if vst_node.get_site_count() != 2 :
 		return "Bisection aborted! Must have exactly 2 sites"
@@ -249,11 +265,13 @@ func bisect(vst_node: VSTNode):
 		for i in range(coplanar_vertices.size() - 1):
 			if(i % 2 != 0): continue;
 			#surface_tool.set_uv(Vector2(0,0))
-			surface_tool.add_vertex(centroid)
+			
 			#surface_tool.set_uv(Vector2(0,0))
 			surface_tool.add_vertex(coplanar_vertices[i + 1])
 			#surface_tool.set_uv(Vector2(0,0))
 			surface_tool.add_vertex(coplanar_vertices[i])
+			
+			surface_tool.add_vertex(centroid)
 			i = i + 1
 		
 		if(side == 0):
@@ -269,6 +287,10 @@ func bisect(vst_node: VSTNode):
 	
 	var mesh_instance_above := MeshInstance3D.new()
 	mesh_instance_above.mesh = surface_tool_a.commit()
+	#mesh_instance_above.mesh.surface_set_material()
+	#var shader = ShaderMaterial.new()
+	#shader.shader = my_shader
+	#mesh_instance_above.mesh.surface_set_material(0,shader) # .next_pass = shader 
 	vst_node._left = VSTNode.new(mesh_instance_above)
 	
 	var mesh_instance_below := MeshInstance3D.new()

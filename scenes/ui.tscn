@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://ba0u840pa5233"]
+[gd_scene load_steps=2 format=3 uid="uid://ba0u840pa5233"]
+
+[ext_resource type="Script" path="res://scripts/ui.gd" id="1_aqis7"]
 
 [node name="UI" type="Control"]
 layout_mode = 3
@@ -7,13 +9,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_aqis7")
 
 [node name="TopContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="TopContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TopContainer"]
+layout_mode = 2
+
+[node name="Version Label" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
 layout_mode = 2
 bbcode_enabled = true
 text = "Destronoi Demo
@@ -22,17 +28,14 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-alignment = 1
-
-[node name="Button" type="Button" parent="HBoxContainer"]
-custom_minimum_size = Vector2(200, 50)
+[node name="Control Label" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
 layout_mode = 2
-text = "DESTROY"
+bbcode_enabled = true
+text = "R - Reload scene
+T - Destroy
+G  - Toggle wireframe
+O - Unpause
+P - Pause/Step"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
