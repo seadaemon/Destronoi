@@ -24,3 +24,4 @@ shape = SubResource("ConvexPolygonShape3D_w35b5")
 
 [node name="Destronoi" type="Node" parent="."]
 script = ExtResource("4_b3sne")
+tree_height = 10

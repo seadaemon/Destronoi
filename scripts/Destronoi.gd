@@ -18,24 +18,26 @@ Author:
 ## === VARIABLES ===
 var _root: VSTNode = null ## Root node of the Voronoi Subdivision Tree
 
+## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
+@export_range(1,10) var tree_height: int = 1
+
 ## === MEMBER FUNCTIONS ===
 func _ready():
+	#var thread: Thread
+	#thread = Thread.new()
+	
 	# Set root geometry to sibling MeshInstance3D
 	_root = VSTNode.new(get_parent().get_node("MeshInstance3D"))
 	# Plot 2 sites for the subdivision
 	plot_sites_random(_root)
 	# Generate 2 children from the root
 	bisect(_root)
-	
-	# generate 2^{n+1} pieces
-	# dont go above 4 unless you want to crash
-	var n = 2
-	
-	for i in range(n):
+	# Perform additional subdivisions depending on tree height
+	for i in range(tree_height - 1):
 		var leaves = []
 		_root.get_leaf_nodes(_root,leaves);
 		for leaf in range(leaves.size()):
-			await plot_sites_random(leaves[leaf])
+			plot_sites_random(leaves[leaf])
 			bisect(leaves[leaf])
 
 

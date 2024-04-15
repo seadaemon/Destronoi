@@ -10,11 +10,14 @@ Author: George Power
 ## - Two sites to create a subdivision
 ## - Two children, left and right, nodes in the binary tree
 
-## === MEMBER VARIABLES ===
+## === GLOBAL VARIABLES ===
+
 var _mesh_instance: MeshInstance3D = null
 var _sites: PackedVector3Array = []
 var _left: VSTNode = null
 var _right: VSTNode = null
+
+## === METHODS ===
 	
 ## VSTNode initialization requires some base mesh to be provided
 func _init(mesh_instance: MeshInstance3D):
