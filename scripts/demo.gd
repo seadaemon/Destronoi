@@ -8,12 +8,12 @@ Author: George Power
 var base_object: RigidBody3D # The object to be destroyed
 var weak_ref; # weak reference for deleting objects 
 var demo_objects # objects at the start of the scene
-
+var x = 0
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	
-	demo_objects = [get_node("Cube")]
+	demo_objects = [get_node("Cube"), get_node("Sphere"), get_node("Cylinder")]
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
 
@@ -47,7 +47,9 @@ func _process(delta):
 # creates rigid bodies for fragment geometry and swaps out the original mesh
 func destroy():
 	# early return if the mesh is already destroyed
-	if(!weak_ref.get_ref()): return
+	if(!weak_ref.get_ref()):
+		#weak_ref = weakref(base_object)
+		return
 	
 	var destronoi: Destronoi = base_object.get_node("Destronoi")
 	var vst_root: VSTNode = destronoi._root
@@ -63,7 +65,7 @@ func destroy():
 		var new_body: RigidBody3D = RigidBody3D.new()
 		new_body.name = "VFragment_{id}".format({"id": vst_leaf})
 		
-		new_body.position = base_object.position
+		new_body.position = base_object.transform.origin
 		
 		var new_mesh_instance = vst_leaves[vst_leaf]._mesh_instance
 		new_mesh_instance.name = "MeshInstance3D"
@@ -74,7 +76,7 @@ func destroy():
 		var new_collision_shape: CollisionShape3D = CollisionShape3D.new()
 		new_collision_shape.name = "CollisionShape3D"
 
-		var velocity_dir = new_body_mesh_instance.mesh.get_aabb().get_center() - base_object.global_position;
+		var velocity_dir = new_body_mesh_instance.mesh.get_aabb().get_center() - base_object.position;
 		velocity_dir = velocity_dir.normalized()
 		
 		new_body.mass = max(new_body_mesh_instance.mesh.get_aabb().get_volume(),0.1)
@@ -85,9 +87,11 @@ func destroy():
 		var endpoints = []
 		var estim_dir = Vector3(0,0,0)
 		for i in range(8):
-			var current_endpoint = new_body_mesh_instance.mesh.get_aabb().get_endpoint(i)
-			var current_dot = current_endpoint.dot(base_object.global_position)
-			if current_dot > 0.0:
+			var current_endpoint = new_body.get_node("MeshInstance3D").mesh.get_aabb().get_endpoint(i)
+			#if(x == 0):
+				#print(current_endpoint)
+			var current_dot = current_endpoint.dot(base_object.transform.origin)
+			if abs(current_dot) > 0.0:
 				endpoints.append(current_endpoint)
 		
 		for x in range(endpoints.size()):
@@ -98,7 +102,7 @@ func destroy():
 		
 		estim_dir = estim_dir.normalized()
 		new_body.set_axis_velocity(10.0 * estim_dir)
-		new_body.angular_velocity = Vector3(randfn(0.0, 1.0), randfn(0.0, 1.0), randfn(0.0, 1.0)).normalized()
+		new_body.angular_velocity = Vector3(randfn(0.0, 2.0), randfn(0.0, 2.0), randfn(0.0, 2.0)).normalized()
 		
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		
@@ -111,3 +115,7 @@ func destroy():
 		add_child(body)
 	
 	base_object.free()
+	x += 1
+	if(x < 3):
+		base_object = demo_objects[x]
+		weak_ref = weakref(base_object)

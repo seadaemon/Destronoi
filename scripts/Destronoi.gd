@@ -77,7 +77,7 @@ func plot_sites_random(vst_node: VSTNode):
 	# a valid pair of sites are both inside the mesh boundary
 	while vst_node._sites.size() < 2:
 		
-		
+		# normally distributed about AABB center
 		site = Vector3(randfn(avg_x, dev),randfn(avg_y, dev),randfn(avg_z, dev))
 		
 		num_intersections = 0
@@ -91,12 +91,6 @@ func plot_sites_random(vst_node: VSTNode):
 		
 		if(num_intersections == 1): # must be inside; add
 			vst_node._sites.append(site)
-		
-		#if(vst_node._sites.size() == 2): # additional check to the pair
-			#var site_vec :Vector3 = (vst_node._sites[0] - vst_node._sites[1]) #.normalized()
-			#
-			#if site_vec.length() > aabb.size.length()/4.0: #abs(site_vec.dot(Vector3.UP)) < 0.95:
-				#vst_node._sites = []
 
 ## Bisect the mesh of a VSTNode. Will return an error if there are fewer than 2 sites
 ## Will overrite children if they already exist
