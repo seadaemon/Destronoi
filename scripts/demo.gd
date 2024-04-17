@@ -16,17 +16,24 @@ func _ready():
 	# always process user input & enable wireframe draw
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
-
-	var demo_objects = [get_node("Cylinder")]
+	
+	var demo_objects = [get_node("Cube")]
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
-
+	
+var x = 0
 func _process(delta):
-	if(Input.is_action_just_pressed("toggle_debug_draw")):
+	if(Input.is_action_just_pressed("toggle_draw_wireframe")):
 		if(get_viewport().debug_draw == Viewport.DEBUG_DRAW_WIREFRAME):
 			get_viewport().debug_draw = Viewport.DEBUG_DRAW_DISABLED
 		else:
 			get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
+	
+	if(Input.is_action_just_pressed("toggle_draw_overdraw")):
+		if(get_viewport().debug_draw == Viewport.DEBUG_DRAW_OVERDRAW):
+			get_viewport().debug_draw = Viewport.DEBUG_DRAW_DISABLED
+		else:
+			get_viewport().debug_draw = Viewport.DEBUG_DRAW_OVERDRAW
 
 	if(Input.is_action_pressed("pause_key")):
 		get_tree().paused = false
@@ -48,11 +55,34 @@ func destroy():
 	var destronoi: Destronoi = base_object.get_node("Destronoi")
 	var vst_root: VSTNode = destronoi._root
 	
+	var vst_sites = vst_root._sites
+	
+	# points
+	var sphere = MeshInstance3D.new()
+	sphere.mesh = SphereMesh.new()
+	var scale_sph = 0.2
+	sphere.scale_object_local(Vector3(scale_sph, scale_sph, scale_sph))
+	var s1 = StaticBody3D.new()
+	s1.add_child(sphere.duplicate())
+	var s2 = StaticBody3D.new()
+	s2.add_child(sphere.duplicate())
+	var sites = [s1, s2]
+	sites[0].position = base_object.position + vst_sites[0]
+	sites[1].position = base_object.position + vst_sites[1]
+	
+	#plane
+	#var plane_mi = MeshInstance3D.new()
+	#plane_mi.mesh = PlaneMesh.new()
+	#var plane = StaticBody3D.new()
+	#plane.add_child(plane_mi)
+	#plane.position = base_object.position + (sites[0].position + 0.5*(sites[1].position - sites[0].position))
+	#plane.global_basis = Basis(Vector3(0,0,1), 45.0)
+	
 	var vst_leaves := []
 	#var valid = true
 	var current_node: VSTNode = vst_root
-	current_node.get_leaf_nodes(current_node, vst_leaves)
-	
+	current_node.get_right_leaf_nodes(current_node, vst_leaves)
+	#vst_leaves.append(current_node._left)
 	# Create rigid bodies for the fragments
 	var new_rigid_bodies := []
 	var sum_mass = 0
@@ -104,5 +134,10 @@ func destroy():
 	for body in new_rigid_bodies:
 		body.mass = body.mass * (base_object.mass/sum_mass)
 		add_child(body)
+	
+	#for s in sites:
+	#	add_child(s)
+	#add_child(plane)
+	
 	
 	base_object.free()

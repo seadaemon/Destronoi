@@ -1,6 +1,5 @@
-[gd_scene load_steps=7 format=3 uid="uid://dxiw8aitb7lr3"]
+[gd_scene load_steps=6 format=3 uid="uid://dxiw8aitb7lr3"]
 
-[ext_resource type="Script" path="res://scripts/cylinder.gd" id="1_75qky"]
 [ext_resource type="ArrayMesh" uid="uid://drlexhtiq5rew" path="res://assets/cylinder.obj" id="2_nil1e"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="3_8yrfc"]
 [ext_resource type="Script" path="res://scripts/Destronoi.gd" id="4_b3sne"]
@@ -13,7 +12,7 @@ shader = ExtResource("3_8yrfc")
 points = PackedVector3Array(-0.0918886, -0.981728, -0.981728, 0.0920346, 0.981699, 0.981699, 0.39625, 0.975987, 0.914845, -0.0918886, 0.981728, -0.981728, -0.914829, -0.975969, 0.396272, 0.981727, -0.981962, 0.0918908, -0.981728, 0.98192, -0.0918868, 0.91482, 0.976005, -0.396287, 0.0920346, -0.981699, 0.981699, -0.707103, -0.983886, -0.707096, -0.707103, 0.983886, 0.707096, 0.670557, -0.975617, -0.731522, 0.91482, 0.976005, 0.396287, 0.670557, -0.975617, 0.731522, -0.707103, 0.983886, -0.707096, -0.396431, -0.975857, 0.914723, 0.39625, 0.975987, -0.914845, -0.914829, -0.975969, -0.396272, 0.91482, -0.976005, -0.396287, -0.396431, 0.975857, -0.914723, -0.914829, 0.975969, 0.396272, -0.396431, 0.975857, 0.914723, 0.981727, 0.981962, -0.0918908, 0.39625, -0.975987, -0.914845, -0.981728, -0.98192, 0.0918868, -0.707103, -0.983886, 0.707096, 0.731565, 0.97547, -0.670492, 0.91482, -0.976005, 0.396287, 0.731565, 0.97547, 0.670492, -0.914829, 0.975969, -0.396272, -0.396431, -0.975857, -0.914723, 0.39625, -0.975987, 0.914845)
 
 [node name="Cylinder" type="RigidBody3D"]
-script = ExtResource("1_75qky")
+mass = 50.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = ExtResource("2_nil1e")
@@ -24,4 +23,3 @@ shape = SubResource("ConvexPolygonShape3D_w35b5")
 
 [node name="Destronoi" type="Node" parent="."]
 script = ExtResource("4_b3sne")
-tree_height = 10

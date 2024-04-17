@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode diffuse_toon;
+//render_mode unshaded;
 
 const vec3 red = vec3(1,0,0);
 const vec3 green = vec3(0,1,0);
@@ -14,7 +14,7 @@ void vertex() {
 	//v_col = colors[VERTEX_ID % 3];
 	v_col = COLOR.rgb;
 	if(v_col == vec3(1,1,1)){
-		v_col = vec3(0.37,0.47,0.47);
+		v_col = vec3(1, 0.870588, 0.678431);
 	}
 }
 

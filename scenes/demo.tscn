@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/demo.gd" id="1_3y721"]
 [ext_resource type="PackedScene" uid="uid://ba0u840pa5233" path="res://scenes/ui.tscn" id="1_aqc1r"]
 [ext_resource type="Script" path="res://scripts/Camera3D.gd" id="3_cv6yu"]
-[ext_resource type="PackedScene" uid="uid://dxiw8aitb7lr3" path="res://scenes/cylinder.tscn" id="4_6gkep"]
+[ext_resource type="PackedScene" uid="uid://cxa6qvwct6egu" path="res://scenes/cube.tscn" id="5_88bdv"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_qskav"]
 size = Vector3(20, 1, 20)
@@ -17,13 +17,14 @@ script = ExtResource("1_3y721")
 [node name="UI" parent="." instance=ExtResource("1_aqc1r")]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 12.5, 10)
+transform = Transform3D(1, 0, 0, 0, 0.948324, 0.317305, 0, -0.317305, 0.948324, 0, 5.02412, 8.42496)
 fov = 61.6
 size = 10.278
 script = ExtResource("3_cv6yu")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.707107, 0.5, -0.5, 0, 0.707107, 0.707107, 0.707107, -0.5, 0.5, 0, 10, 0)
+transform = Transform3D(0.706822, 0.519863, -0.479734, -0.0200645, 0.692635, 0.72101, 0.707107, -0.5, 0.5, 0, 10.0341, 0)
+light_indirect_energy = 3.732
 shadow_enabled = true
 
 [node name="Floor" type="StaticBody3D" parent="."]
@@ -35,5 +36,5 @@ mesh = SubResource("BoxMesh_qskav")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_2opyn")
 
-[node name="Cylinder" parent="." instance=ExtResource("4_6gkep")]
+[node name="Cube" parent="." instance=ExtResource("5_88bdv")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55945, 0)

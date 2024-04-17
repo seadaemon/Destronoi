@@ -1,5 +1,6 @@
 @icon("destronoi_icon.svg")
 class_name Destronoi extends Node
+const Laterality = preload("res://scripts/Laterality.gd")
 """
 Author: 
 	George Power 
@@ -15,17 +16,14 @@ Author:
 ## When the Destronoi node is loaded it will create a VST which is accessible
 ## through the _root.
 
-## === VARIABLES ===
-var _root: VSTNode = null ## Root node of the Voronoi Subdivision Tree
+
+## Root node of the Voronoi Subdivision Tree
+var _root: VSTNode = null
 
 ## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
 @export_range(1,10) var tree_height: int = 1
 
-## === MEMBER FUNCTIONS ===
 func _ready():
-	#var thread: Thread
-	#thread = Thread.new()
-	
 	# Set root geometry to sibling MeshInstance3D
 	_root = VSTNode.new(get_parent().get_node("MeshInstance3D"))
 	# Plot 2 sites for the subdivision
@@ -33,26 +31,38 @@ func _ready():
 	# Generate 2 children from the root
 	bisect(_root)
 	# Perform additional subdivisions depending on tree height
+	var x = 0
 	for i in range(tree_height - 1):
 		var leaves = []
 		_root.get_leaf_nodes(_root,leaves);
+		#print(leaves)
 		for leaf in range(leaves.size()):
+			#print(leaf)
 			plot_sites_random(leaves[leaf])
 			bisect(leaves[leaf])
 
+			#threads[x].start(bisect.bind(leaves[leaf]), 2)
+			
+			#threads[x].start(foo.bind(leaves[leaf]), 2)
+			#print(leaves[leaf])
+			#print(x)
+			x += 1
+		#for t:Thread in threads:
+		#	if t.is_started():
+		#		t.wait_to_finish()
+			
+func foo(x):
+	print("im foo")
 
 ## Manually plot sites for the subdivision; 
 ## Site coordinates are relative to the centre of the mesh; Overwrites existing sites
 func plot_sites(vst_node: VSTNode, site1: Vector3, site2: Vector3):
-	#print(vst_node._mesh_instance.global_position.)
-	#vst_node._mesh_instance.position + 
 	vst_node._sites = [vst_node._mesh_instance.position + site1, vst_node._mesh_instance.position + site2]
 
 ## Randomly plot sites for the subdivision using rejection sampling
 ## Site coordinates are relative to the centre of the mesh; Overwrites existing sites
 func plot_sites_random(vst_node: VSTNode):
-	# clear existing sites
-	vst_node._sites = []
+	vst_node._sites = [] # clear existing sites
 
 	var site : Vector3
 	
@@ -60,7 +70,7 @@ func plot_sites_random(vst_node: VSTNode):
 	var mdt = MeshDataTool.new()
 	mdt.create_from_surface(vst_node._mesh_instance.mesh,0)
 	
-	# Bounding box used to get range of random points
+	# Bounding box used to get range limits for random points
 	var aabb : AABB = vst_node._mesh_instance.get_aabb()
 	var min_vec : Vector3 = aabb.position
 	var max_vec : Vector3 = aabb.end
@@ -70,18 +80,20 @@ func plot_sites_random(vst_node: VSTNode):
 	var avg_y = (max_vec.y + min_vec.y)/2.0
 	var avg_z = (max_vec.z + min_vec.z)/2.0
 	
-	#var dist_profile = []
-	#var x_even_cut = Vector3(randfn(avg_x, 0.01),0,0)
-	#var y_even_cut = Vector3(randfn(avg_y,0.01),0,0)
-	#var z_even_cut = Vector3(randfn(avg_z,0.01),0,0)
-	#var min_cut = Vector3()
-	#dist_profile = [x_even_cut, y_even_cut, z_even_cut]
-	
 	# keep generating sites until they are within the mesh
+	# a valid pair of sites are both inside the mesh boundary
 	while vst_node._sites.size() < 2:
 		
+		var diff = 0.1
+		var diff2 = 0.1
+		#site = Vector3(randfn(avg_x, diff),randfn(avg_y, diff),randfn(avg_z, diff)) # random pieces
+		site = Vector3(randfn(avg_x, avg_y),0,randfn(avg_z, avg_y))
+		if(vst_node._level > 5):
+			site = Vector3(randfn(avg_x, diff),randfn(avg_y, diff),randfn(avg_z, diff)) # tall splinters
 		
-		site = Vector3(randfn(avg_x, 0.1),randfn(avg_y, 0.1),randfn(avg_z, 0.1)) # randfn(avg_z, 0.05)
+		#if(vst_node._level % 2 != 0):
+			  # flat horizontal cuts
+		#site = Vector3(avg_x + 0.1,randfn(avg_y, diff),randfn(avg_z, diff)) # flat horizontal cuts
 		
 		
 		var num_intersections = 0
@@ -94,7 +106,6 @@ func plot_sites_random(vst_node: VSTNode):
 				num_intersections += 1
 		
 		if(num_intersections == 1):
-			#print("hit! site plotted")
 			vst_node._sites.append(site)
 		
 		#if(vst_node._sites.size() == 2):
@@ -102,17 +113,13 @@ func plot_sites_random(vst_node: VSTNode):
 			
 			#if abs(site_vec.dot(aabb.get_center())) > 0.0001 :
 			#	vst_node._sites = []
-				
 
 ## Bisect the mesh of a VSTNode. Will return an error if there are fewer than 2 sites
 ## Will overrite children if they already exist
 func bisect(vst_node: VSTNode):
-	
 	# Colors for the new geometry
-	#var outer_colors = [Color.PURPLE, Color.VIOLET, Color.SKY_BLUE, Color.BLUE_VIOLET]
-	var outer_colors = [Color.DARK_RED]
-	var color_yellow := (Color.LIGHT_YELLOW + Color(1,1,0))/2.0
-	#var color_yellow = 
+	var outer_colors = [Color.NAVAJO_WHITE]
+	var inner_color := (Color.DEEP_SKY_BLUE)
 	
 	if vst_node.get_site_count() != 2 :
 		return "Bisection aborted! Must have exactly 2 sites"
@@ -141,8 +148,9 @@ func bisect(vst_node: VSTNode):
 	surface_tool_b.set_material(vst_node.get_override_material())
 	surface_tool_b.set_smooth_group(-1)
 	
-	## GENERATE CHILD MESHES
-	# ITERATE OVER EACH FACE OF THE PARENT MESH
+	## GENERATE SUB MESHES
+	# ITERATE OVER EACH FACE OF THE BASE MESH
+	# 2 iterations for 2 sub meshes (above/below)
 	for side in range(2):
 		# Intermediate surface tool to construct the new mesh
 		var surface_tool := SurfaceTool.new()
@@ -150,7 +158,7 @@ func bisect(vst_node: VSTNode):
 		surface_tool.set_material(vst_node._mesh_instance.get_active_material(0))
 		surface_tool.set_smooth_group(-1)
 		
-		# invert normal for other side
+		# invert normal for other side (i.e. treat below as above and repeat the process)
 		if(side == 1):
 			plane.normal = -plane.normal
 			plane.d = -plane.d
@@ -177,9 +185,8 @@ func bisect(vst_node: VSTNode):
 				continue
 			if(vertices_above_plane.size() == 3):
 				for v_id in face_vertices:
-					#surface_tool.set_uv(data_tool.get_vertex_uv(v_id))
-					if data_tool.get_vertex_color(v_id) == color_yellow:
-						surface_tool.set_color(color_yellow)
+					if data_tool.get_vertex_color(v_id) == inner_color:
+						surface_tool.set_color(inner_color)
 					surface_tool.add_vertex(data_tool.get_vertex(v_id))
 				continue
 			
@@ -201,9 +208,8 @@ func bisect(vst_node: VSTNode):
 				coplanar_vertices.append(intersection_before)
 				
 				# TRIANGLE CREATION
-				#surface_tool.set_uv(data_tool.get_vertex_uv(vertices_above_plane[0]))
-				if data_tool.get_vertex_color(vertices_above_plane[0]) == color_yellow:
-					surface_tool.set_color(color_yellow)
+				if data_tool.get_vertex_color(vertices_above_plane[0]) == inner_color:
+					surface_tool.set_color(inner_color)
 				surface_tool.add_vertex(data_tool.get_vertex(vertices_above_plane[0]))
 				
 				surface_tool.add_vertex(intersection_points[0])
@@ -228,21 +234,19 @@ func bisect(vst_node: VSTNode):
 				intersection_points.append(intersection_before)
 				coplanar_vertices.append(intersection_after)
 				coplanar_vertices.append(intersection_before)
-				# find shortest 'cross-length' to make 2 triangles from 4 pounds
+				# find shortest 'cross-length' to make 2 triangles from 4 points
 				var index_shortest := 0;
 				var dist_0 = data_tool.get_vertex(vertices_above_plane[0]).distance_to(intersection_points[0])
 				var dist_1 = data_tool.get_vertex(vertices_above_plane[1]).distance_to(intersection_points[1])
 				if dist_1 > dist_0 : index_shortest = 1;
 				
 				#TRIANGLE 1
-				#surface_tool.set_uv(data_tool.get_vertex_uv(vertices_above_plane[0]))
-				if data_tool.get_vertex_color(vertices_above_plane[0]) == color_yellow:
-					surface_tool.set_color(color_yellow)
+				if data_tool.get_vertex_color(vertices_above_plane[0]) == inner_color:
+					surface_tool.set_color(inner_color)
 				surface_tool.add_vertex(data_tool.get_vertex(vertices_above_plane[0]))
 				
-				#surface_tool.set_uv(data_tool.get_vertex_uv(vertices_above_plane[1]))
-				if data_tool.get_vertex_color(vertices_above_plane[1]) == color_yellow:
-					surface_tool.set_color(color_yellow)
+				if data_tool.get_vertex_color(vertices_above_plane[1]) == inner_color:
+					surface_tool.set_color(inner_color)
 				surface_tool.add_vertex(data_tool.get_vertex(vertices_above_plane[1]))
 				
 				surface_tool.add_vertex(intersection_points[index_shortest])
@@ -250,31 +254,22 @@ func bisect(vst_node: VSTNode):
 				# TRIANGLE 2
 				surface_tool.add_vertex(intersection_points[0])
 				surface_tool.add_vertex(intersection_points[1])
-				#surface_tool.set_uv(data_tool.get_vertex_uv(vertices_above_plane[index_shortest]))
 				surface_tool.add_vertex(data_tool.get_vertex(vertices_above_plane[index_shortest]))
 				continue
-		# END for face in range(data_tool.get_face_count()):
+		# END for face in range(data_tool.get_face_count())
 		
 		var centroid := Vector3(0,0,0)
 		for vertices in coplanar_vertices:
 			centroid += vertices
 		centroid /= coplanar_vertices.size()
 		
-		# DEFINE NEW FACE
-		# FIND CENTROID
-		#APPEND NEW TRIANGLES
-		surface_tool.set_color(color_yellow)
+		# DEFINE NEW FACE; FIND CENTROID; APPEND TRIANGLES
+		surface_tool.set_color(inner_color)
 		for i in range(coplanar_vertices.size() - 1):
 			if(i % 2 != 0): continue;
-			#surface_tool.set_uv(Vector2(0,0))
-			
-			#surface_tool.set_uv(Vector2(0,0))
 			surface_tool.add_vertex(coplanar_vertices[i + 1])
-			#surface_tool.set_uv(Vector2(0,0))
 			surface_tool.add_vertex(coplanar_vertices[i])
-			
 			surface_tool.add_vertex(centroid)
-			i = i + 1
 		
 		if(side == 0):
 			surface_tool_a = surface_tool
@@ -287,16 +282,15 @@ func bisect(vst_node: VSTNode):
 	surface_tool_b.index()
 	surface_tool_b.generate_normals()
 	
+	# Assign new meshes to left and right nodes
+	# Left is above, right is below; this decision was arbitrary
+	
 	var mesh_instance_above := MeshInstance3D.new()
 	mesh_instance_above.mesh = surface_tool_a.commit()
-	#mesh_instance_above.mesh.surface_set_material()
-	#var shader = ShaderMaterial.new()
-	#shader.shader = my_shader
-	#mesh_instance_above.mesh.surface_set_material(0,shader) # .next_pass = shader 
-	vst_node._left = VSTNode.new(mesh_instance_above)
+	vst_node._left = VSTNode.new(mesh_instance_above, vst_node._level + 1, Laterality.LEFT)
 	
 	var mesh_instance_below := MeshInstance3D.new()
 	mesh_instance_below.mesh = surface_tool_b.commit()
-	vst_node._right = VSTNode.new(mesh_instance_below)
+	vst_node._right = VSTNode.new(mesh_instance_below, vst_node._level + 1, Laterality.RIGHT)
 	
 	return "Bisection successful!"

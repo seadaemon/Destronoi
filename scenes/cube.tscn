@@ -12,6 +12,7 @@ shader = ExtResource("2_7c4d1")
 size = Vector3(2, 2, 2)
 
 [node name="Cube" type="RigidBody3D"]
+mass = 50.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_pg0gp")
@@ -22,3 +23,4 @@ shape = SubResource("BoxShape3D_qsh1u")
 
 [node name="Destronoi" type="Node" parent="."]
 script = ExtResource("3_skiwi")
+tree_height = 5
