@@ -19,10 +19,10 @@ Author:
 
 ## Root node of the Voronoi Subdivision Tree
 var _root: VSTNode = null
-
 ## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
 @export_range(1,10) var tree_height: int = 1
 
+# By default, a mesh must be bisected once
 func _ready():
 	# Set root geometry to sibling MeshInstance3D
 	_root = VSTNode.new(get_parent().get_node("MeshInstance3D"))
@@ -30,29 +30,15 @@ func _ready():
 	plot_sites_random(_root)
 	# Generate 2 children from the root
 	bisect(_root)
+	
 	# Perform additional subdivisions depending on tree height
-	var x = 0
 	for i in range(tree_height - 1):
 		var leaves = []
 		_root.get_leaf_nodes(_root,leaves);
-		#print(leaves)
 		for leaf in range(leaves.size()):
-			#print(leaf)
 			plot_sites_random(leaves[leaf])
 			bisect(leaves[leaf])
 
-			#threads[x].start(bisect.bind(leaves[leaf]), 2)
-			
-			#threads[x].start(foo.bind(leaves[leaf]), 2)
-			#print(leaves[leaf])
-			#print(x)
-			x += 1
-		#for t:Thread in threads:
-		#	if t.is_started():
-		#		t.wait_to_finish()
-			
-func foo(x):
-	print("im foo")
 
 ## Manually plot sites for the subdivision; 
 ## Site coordinates are relative to the centre of the mesh; Overwrites existing sites
@@ -74,45 +60,43 @@ func plot_sites_random(vst_node: VSTNode):
 	var aabb : AABB = vst_node._mesh_instance.get_aabb()
 	var min_vec : Vector3 = aabb.position
 	var max_vec : Vector3 = aabb.end
+	aabb.get_center()
 	
-	# Distribution profiles
+	# Centers of each axis
 	var avg_x = (max_vec.x + min_vec.x)/2.0
 	var avg_y = (max_vec.y + min_vec.y)/2.0
 	var avg_z = (max_vec.z + min_vec.z)/2.0
 	
+	
+	var dev = 0.1 # deviation from the mean
+	var num_intersections = 0
+	var face_v_ids = []
+	var verts = []
+	var intersection_point
 	# keep generating sites until they are within the mesh
 	# a valid pair of sites are both inside the mesh boundary
 	while vst_node._sites.size() < 2:
 		
-		var diff = 0.1
-		var diff2 = 0.1
-		#site = Vector3(randfn(avg_x, diff),randfn(avg_y, diff),randfn(avg_z, diff)) # random pieces
-		site = Vector3(randfn(avg_x, avg_y),0,randfn(avg_z, avg_y))
-		if(vst_node._level > 5):
-			site = Vector3(randfn(avg_x, diff),randfn(avg_y, diff),randfn(avg_z, diff)) # tall splinters
 		
-		#if(vst_node._level % 2 != 0):
-			  # flat horizontal cuts
-		#site = Vector3(avg_x + 0.1,randfn(avg_y, diff),randfn(avg_z, diff)) # flat horizontal cuts
+		site = Vector3(randfn(avg_x, dev),randfn(avg_y, dev),randfn(avg_z, dev))
 		
-		
-		var num_intersections = 0
+		num_intersections = 0
 		for tri in range(mdt.get_face_count()):
-			var face_v_ids = [mdt.get_face_vertex(tri,0),mdt.get_face_vertex(tri,1),mdt.get_face_vertex(tri,2)]
-			var verts = [mdt.get_vertex(face_v_ids[0]),mdt.get_vertex(face_v_ids[1]),mdt.get_vertex(face_v_ids[2])]
-			var intersection_point = Geometry3D.ray_intersects_triangle(site, Vector3.UP, verts[0], verts[1], verts[2])
+			face_v_ids = [mdt.get_face_vertex(tri,0),mdt.get_face_vertex(tri,1),mdt.get_face_vertex(tri,2)]
+			verts = [mdt.get_vertex(face_v_ids[0]),mdt.get_vertex(face_v_ids[1]),mdt.get_vertex(face_v_ids[2])]
+			intersection_point = Geometry3D.ray_intersects_triangle(site, Vector3.UP, verts[0], verts[1], verts[2])
 			
 			if(intersection_point != null):
 				num_intersections += 1
 		
-		if(num_intersections == 1):
+		if(num_intersections == 1): # must be inside; add
 			vst_node._sites.append(site)
 		
-		#if(vst_node._sites.size() == 2):
-			#var site_vec :Vector3 = vst_node._sites[0] - vst_node._sites[1]
-			
-			#if abs(site_vec.dot(aabb.get_center())) > 0.0001 :
-			#	vst_node._sites = []
+		#if(vst_node._sites.size() == 2): # additional check to the pair
+			#var site_vec :Vector3 = (vst_node._sites[0] - vst_node._sites[1]) #.normalized()
+			#
+			#if site_vec.length() > aabb.size.length()/4.0: #abs(site_vec.dot(Vector3.UP)) < 0.95:
+				#vst_node._sites = []
 
 ## Bisect the mesh of a VSTNode. Will return an error if there are fewer than 2 sites
 ## Will overrite children if they already exist

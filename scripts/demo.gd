@@ -5,23 +5,19 @@ Author: George Power
 """
 ## Script for the Demo scene; to showcase and test destructible objects
 
-# === GLOBAL VARIABLES ===
-
 var base_object: RigidBody3D # The object to be destroyed
 var weak_ref; # weak reference for deleting objects 
-
-# === METHODS ===
+var demo_objects # objects at the start of the scene
 
 func _ready():
-	# always process user input & enable wireframe draw
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	
-	var demo_objects = [get_node("Cube")]
+	demo_objects = [get_node("Cube")]
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
-	
-var x = 0
+
+# handle user input
 func _process(delta):
 	if(Input.is_action_just_pressed("toggle_draw_wireframe")):
 		if(get_viewport().debug_draw == Viewport.DEBUG_DRAW_WIREFRAME):
@@ -48,41 +44,18 @@ func _process(delta):
 	if(Input.is_action_just_pressed("reload_scene")):
 		get_tree().reload_current_scene()
 
-
+# creates rigid bodies for fragment geometry and swaps out the original mesh
 func destroy():
-	if(!weak_ref.get_ref()):
-		return
+	# early return if the mesh is already destroyed
+	if(!weak_ref.get_ref()): return
+	
 	var destronoi: Destronoi = base_object.get_node("Destronoi")
 	var vst_root: VSTNode = destronoi._root
 	
-	var vst_sites = vst_root._sites
-	
-	# points
-	var sphere = MeshInstance3D.new()
-	sphere.mesh = SphereMesh.new()
-	var scale_sph = 0.2
-	sphere.scale_object_local(Vector3(scale_sph, scale_sph, scale_sph))
-	var s1 = StaticBody3D.new()
-	s1.add_child(sphere.duplicate())
-	var s2 = StaticBody3D.new()
-	s2.add_child(sphere.duplicate())
-	var sites = [s1, s2]
-	sites[0].position = base_object.position + vst_sites[0]
-	sites[1].position = base_object.position + vst_sites[1]
-	
-	#plane
-	#var plane_mi = MeshInstance3D.new()
-	#plane_mi.mesh = PlaneMesh.new()
-	#var plane = StaticBody3D.new()
-	#plane.add_child(plane_mi)
-	#plane.position = base_object.position + (sites[0].position + 0.5*(sites[1].position - sites[0].position))
-	#plane.global_basis = Basis(Vector3(0,0,1), 45.0)
-	
 	var vst_leaves := []
-	#var valid = true
 	var current_node: VSTNode = vst_root
 	current_node.get_right_leaf_nodes(current_node, vst_leaves)
-	#vst_leaves.append(current_node._left)
+
 	# Create rigid bodies for the fragments
 	var new_rigid_bodies := []
 	var sum_mass = 0
@@ -105,8 +78,10 @@ func destroy():
 		velocity_dir = velocity_dir.normalized()
 		
 		new_body.mass = max(new_body_mesh_instance.mesh.get_aabb().get_volume(),0.1)
-
 		sum_mass += new_body.mass
+		
+		# find the vector pointing from the base object's center, to the new fragment's center
+		# fragments should go outward, as if the object has combusted
 		var endpoints = []
 		var estim_dir = Vector3(0,0,0)
 		for i in range(8):
@@ -128,16 +103,11 @@ func destroy():
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		
 		new_body.add_child(new_collision_shape)
-		
 		new_rigid_bodies.append(new_body)
 	
 	for body in new_rigid_bodies:
+		# scale masses to match the base object
 		body.mass = body.mass * (base_object.mass/sum_mass)
 		add_child(body)
-	
-	#for s in sites:
-	#	add_child(s)
-	#add_child(plane)
-	
 	
 	base_object.free()
