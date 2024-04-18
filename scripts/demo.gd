@@ -7,15 +7,28 @@ Author: George Power
 
 var base_object: RigidBody3D # The object to be destroyed
 var weak_ref; # weak reference for deleting objects 
-var demo_objects # objects at the start of the scene
-var x = 0
+var demo_objects = [] # objects at the start of the scene
+var x = 0 # used when multiple objects are loaded
+var cube = preload("res://scenes/cube.tscn")
+var cube_instance = cube.instantiate()
+var cylinder = preload("res://scenes/cylinder.tscn")
+var cylinder_instance = cylinder.instantiate()
+var sphere = preload("res://scenes/sphere.tscn")
+var sphere_instance = sphere.instantiate()
+
 func _ready():
+	var dbg_file = FileAccess.open("res://profiling/load10.txt", FileAccess.READ_WRITE)
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	
-	demo_objects = [get_node("Cube"), get_node("Sphere"), get_node("Cylinder")]
+	# set the destructible objects
+	get_node("Destructibles").add_child(sphere_instance)
+	dbg_file.seek_end()
+	dbg_file.store_line(str(Time.get_ticks_msec()))
+	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
+	
 
 # handle user input
 func _process(delta):
@@ -88,9 +101,8 @@ func destroy():
 		var estim_dir = Vector3(0,0,0)
 		for i in range(8):
 			var current_endpoint = new_body.get_node("MeshInstance3D").mesh.get_aabb().get_endpoint(i)
-			#if(x == 0):
-				#print(current_endpoint)
-			var current_dot = current_endpoint.dot(base_object.transform.origin)
+			current_endpoint = current_endpoint.normalized()
+			var current_dot = current_endpoint.dot(base_object.transform.origin.normalized())
 			if abs(current_dot) > 0.0:
 				endpoints.append(current_endpoint)
 		
@@ -102,7 +114,7 @@ func destroy():
 		
 		estim_dir = estim_dir.normalized()
 		new_body.set_axis_velocity(10.0 * estim_dir)
-		new_body.angular_velocity = Vector3(randfn(0.0, 2.0), randfn(0.0, 2.0), randfn(0.0, 2.0)).normalized()
+		#new_body.angular_velocity = Vector3(randfn(2.0, 2.0), randfn(2.0, 2.0), randfn(2.0, 2.0)).normalized()
 		
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		
@@ -116,6 +128,6 @@ func destroy():
 	
 	base_object.free()
 	x += 1
-	if(x < 3):
+	if(x < demo_objects.size()):
 		base_object = demo_objects[x]
 		weak_ref = weakref(base_object)

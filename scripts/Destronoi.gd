@@ -20,7 +20,7 @@ Author:
 ## Root node of the Voronoi Subdivision Tree
 var _root: VSTNode = null
 ## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
-@export_range(1,10) var tree_height: int = 1
+@export_range(1,14) var tree_height: int = 1
 
 # By default, a mesh must be bisected once
 func _ready():

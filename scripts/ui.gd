@@ -13,3 +13,6 @@ func _ready():
 
 func _process(delta):
 	fps_label.text = "[right]%3d FPS[/right]" % int(Engine.get_frames_per_second())
+
+func _gui_input(event):
+	pass

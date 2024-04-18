@@ -10,7 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-mouse_default_cursor_shape = 2
 script = ExtResource("1_aqis7")
 
 [node name="TopContainer" type="HBoxContainer" parent="."]
@@ -53,7 +52,6 @@ offset_bottom = 165.0
 [node name="FPS Label" type="RichTextLabel" parent="VBoxContainer2"]
 layout_mode = 2
 bbcode_enabled = true
-text = "2 FF"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0

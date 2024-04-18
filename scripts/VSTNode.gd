@@ -63,8 +63,3 @@ func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], level: int 
 
 func _to_string():
 	return "VSTNode {mesh}".format({"mesh":_mesh_instance})
-
-# verbose print
-#func _to_string():
-	#var output = "VSTNode {\n\t_mesh_data: {mesh}\n\t_sites: {sites}\n\n\t_left: {left}\n\t_right: {right}\n}"
-	#return output.format({"mesh": _mesh_instance,"sites": _sites,"left": _left,"right": _right})

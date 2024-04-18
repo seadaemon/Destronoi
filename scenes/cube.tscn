@@ -12,6 +12,7 @@ shader = ExtResource("2_7c4d1")
 size = Vector3(2, 2, 2)
 
 [node name="Cube" type="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 mass = 50.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
