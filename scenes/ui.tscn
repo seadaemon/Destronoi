@@ -43,6 +43,35 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
+[node name="Container" type="Container" parent="TopContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="SpinLeftLabel" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
+layout_mode = 2
+text = "Left Level"
+fit_content = true
+scroll_active = false
+
+[node name="SpinLeft" type="SpinBox" parent="TopContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 1.0
+max_value = 5.0
+value = 1.0
+
+[node name="SpinRightLabel" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
+layout_mode = 2
+text = "Right Level
+"
+fit_content = true
+scroll_active = false
+
+[node name="SpinRight" type="SpinBox" parent="TopContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 1.0
+max_value = 5.0
+value = 1.0
+
 [node name="VBoxContainer2" type="VBoxContainer" parent="."]
 layout_mode = 2
 offset_left = 1150.0

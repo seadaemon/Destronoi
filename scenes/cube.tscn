@@ -24,4 +24,4 @@ shape = SubResource("BoxShape3D_qsh1u")
 
 [node name="Destronoi" type="Node" parent="."]
 script = ExtResource("3_skiwi")
-tree_height = 2
+tree_height = 6

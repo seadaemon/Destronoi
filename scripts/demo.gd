@@ -15,12 +15,14 @@ var cylinder = preload("res://scenes/cylinder.tscn")
 var cylinder_instance = cylinder.instantiate()
 var sphere = preload("res://scenes/sphere.tscn")
 var sphere_instance = sphere.instantiate()
+@onready var spin_left = get_node("UI/TopContainer/VBoxContainer/SpinLeft")
+@onready var spin_right = get_node("UI/TopContainer/VBoxContainer/SpinRight")
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	# set the destructible objects
-	get_node("Destructibles").add_child(cylinder_instance)
+	get_node("Destructibles").add_child(sphere_instance)
 	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
@@ -47,16 +49,15 @@ func _process(delta):
 		get_tree().paused = false
 
 	if(Input.is_action_just_pressed("destroy_key")):
-		destroy()
+		destroy(spin_left.value, spin_right.value)
 	
 	if(Input.is_action_just_pressed("reload_scene")):
 		get_tree().reload_current_scene()
 
 # creates rigid bodies for fragment geometry and swaps out the original mesh
-func destroy():
+func destroy(left_val,right_val):
 	# early return if the mesh is already destroyed
 	if(!weak_ref.get_ref()):
-		#weak_ref = weakref(base_object)
 		return
 	
 	var destronoi: Destronoi = base_object.get_node("Destronoi")
@@ -64,8 +65,8 @@ func destroy():
 	
 	var vst_leaves := []
 	var current_node: VSTNode = vst_root
-	current_node.get_left_leaf_nodes(current_node, vst_leaves, 1)
-	current_node.get_right_leaf_nodes(current_node, vst_leaves, 1)
+	current_node.get_left_leaf_nodes(current_node, vst_leaves, left_val)
+	current_node.get_right_leaf_nodes(current_node, vst_leaves, right_val)
 	
 	# Create rigid bodies for the fragments
 	var new_rigid_bodies := []

@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dxiw8aitb7lr3"]
 
-[ext_resource type="ArrayMesh" uid="uid://drlexhtiq5rew" path="res://assets/cylinder.obj" id="2_nil1e"]
+[ext_resource type="ArrayMesh" uid="uid://qytxlsgvha1i" path="res://assets/cylinder.obj" id="2_nil1e"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="3_8yrfc"]
 [ext_resource type="Script" path="res://scripts/Destronoi.gd" id="4_b3sne"]
 
@@ -24,4 +24,4 @@ shape = SubResource("ConvexPolygonShape3D_w35b5")
 
 [node name="Destronoi" type="Node" parent="."]
 script = ExtResource("4_b3sne")
-tree_height = 2
+tree_height = 6
