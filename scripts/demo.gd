@@ -17,14 +17,10 @@ var sphere = preload("res://scenes/sphere.tscn")
 var sphere_instance = sphere.instantiate()
 
 func _ready():
-	var dbg_file = FileAccess.open("res://profiling/load10.txt", FileAccess.READ_WRITE)
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
-	
 	# set the destructible objects
 	get_node("Destructibles").add_child(sphere_instance)
-	dbg_file.seek_end()
-	dbg_file.store_line(str(Time.get_ticks_msec()))
 	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
