@@ -20,12 +20,11 @@ func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
 	# set the destructible objects
-	get_node("Destructibles").add_child(sphere_instance)
+	get_node("Destructibles").add_child(cylinder_instance)
 	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	weak_ref = weakref(base_object)
 	
-
 # handle user input
 func _process(delta):
 	if(Input.is_action_just_pressed("toggle_draw_wireframe")):
@@ -65,8 +64,9 @@ func destroy():
 	
 	var vst_leaves := []
 	var current_node: VSTNode = vst_root
-	current_node.get_right_leaf_nodes(current_node, vst_leaves)
-
+	current_node.get_left_leaf_nodes(current_node, vst_leaves, 1)
+	current_node.get_right_leaf_nodes(current_node, vst_leaves, 1)
+	
 	# Create rigid bodies for the fragments
 	var new_rigid_bodies := []
 	var sum_mass = 0

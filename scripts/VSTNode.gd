@@ -49,16 +49,28 @@ func get_leaf_nodes(root: VSTNode = null, out_arr: Array = []):
 		get_leaf_nodes(root._right, out_arr)
 	return []
 
-func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], level: int = 0):
+func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0):
 	if(root == null):
 		return [];
-	if(root._left == null && root._right == null):
+	if(root._left == null && root._right == null) || level == lim:
+		out_arr.append(root)
+		return [root]
+	if(root._left != null && level > 0):
+		get_right_leaf_nodes(root._left, out_arr, lim, level+1)
+	if(root._right != null):
+		get_right_leaf_nodes(root._right, out_arr, lim, level+1)
+	return []
+	
+func get_left_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0):
+	if(root == null):
+		return [];
+	if(root._left == null && root._right == null) || level == lim:
 		out_arr.append(root)
 		return [root]
 	if(root._left != null):
-		get_leaf_nodes(root._left, out_arr)
-	if(root._right != null):
-		get_leaf_nodes(root._right, out_arr)
+		get_left_leaf_nodes(root._left, out_arr, lim, level+1)
+	if(root._right != null && level > 0):
+		get_left_leaf_nodes(root._right, out_arr, lim, level+1)
 	return []
 
 func _to_string():
