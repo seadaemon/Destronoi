@@ -1,6 +1,8 @@
-@icon("destronoi_icon.svg")
-class_name Destronoi extends Node
-const Laterality = preload("res://scripts/Laterality.gd")
+@tool
+#@icon("./destronoi_icon.svg")
+extends Node
+class_name DestronoiNode
+const Laterality = preload("./Laterality.gd")
 """
 Author: George Power <george@georgepower.dev>
 """

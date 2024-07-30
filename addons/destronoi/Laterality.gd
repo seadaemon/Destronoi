@@ -1,3 +1,4 @@
+@tool
 """
 Author: George Power <george@georgepower.dev>
 """

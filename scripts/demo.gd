@@ -18,6 +18,8 @@ func _ready():
 	RenderingServer.set_debug_generate_wireframes(true)
 	# set the destructible objects
 	get_node("Destructibles").add_child(sphere_instance)
+	#get_node("Destructibles").add_child(cylinder_instance)
+	#get_node("Destructibles").add_child(cube_instance)
 	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	
@@ -43,8 +45,10 @@ func _process(delta):
 		get_tree().paused = false
 
 	if(Input.is_action_just_pressed("destroy_key")):
+		#print("foo")
 		if(base_object != null):
-			var destronoi: Destronoi = base_object.get_node("Destronoi")
+			
+			var destronoi: DestronoiNode = base_object.get_node("DestronoiNode")
 			destronoi.destroy(1,1)
 	
 	if(Input.is_action_just_pressed("reload_scene")):

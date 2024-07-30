@@ -29,7 +29,7 @@ project/assembly_name="Destronoi"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/destronoi/plugin.cfg")
 
 [file_customization]
 

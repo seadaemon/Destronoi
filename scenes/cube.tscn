@@ -2,7 +2,7 @@
 
 [ext_resource type="ArrayMesh" uid="uid://b0px1utqqp58w" path="res://assets/textured_cube.obj" id="1_pg0gp"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_7c4d1"]
-[ext_resource type="Script" path="res://scripts/Destronoi.gd" id="3_skiwi"]
+[ext_resource type="Script" path="res://addons/destronoi/DestronoiNode.gd" id="3_t2xob"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f5qce"]
 render_priority = 0
@@ -22,6 +22,5 @@ surface_material_override/0 = SubResource("ShaderMaterial_f5qce")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_qsh1u")
 
-[node name="Destronoi" type="Node" parent="."]
-script = ExtResource("3_skiwi")
-tree_height = 6
+[node name="DestronoiNode" type="Node" parent="."]
+script = ExtResource("3_t2xob")

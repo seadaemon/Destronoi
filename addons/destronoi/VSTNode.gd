@@ -1,3 +1,4 @@
+@tool
 class_name VSTNode
 """
 Author: George Power <george@georgepower.dev>
@@ -10,7 +11,7 @@ Author: George Power <george@georgepower.dev>
 ## - Two sites to define a bisector plane
 ## - Two children, left and right, nodes in the binary tree
 
-const Laterality = preload("res://scripts/Laterality.gd")
+const Laterality = preload("./Laterality.gd")
 var _mesh_instance: MeshInstance3D = null
 var _sites: PackedVector3Array = []
 var _left: VSTNode = null

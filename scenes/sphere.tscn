@@ -2,7 +2,7 @@
 
 [ext_resource type="ArrayMesh" uid="uid://wkudplyhyqa8" path="res://assets/icosphere.obj" id="1_kf61c"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_5or85"]
-[ext_resource type="Script" path="res://scripts/Destronoi.gd" id="3_60ewa"]
+[ext_resource type="Script" path="res://addons/destronoi/DestronoiNode.gd" id="3_ykljg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oo6ir"]
 render_priority = 0
@@ -22,6 +22,5 @@ surface_material_override/0 = SubResource("ShaderMaterial_oo6ir")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("ConvexPolygonShape3D_h1nh0")
 
-[node name="Destronoi" type="Node" parent="."]
-script = ExtResource("3_60ewa")
-tree_height = 7
+[node name="DestronoiNode" type="Node" parent="."]
+script = ExtResource("3_ykljg")
