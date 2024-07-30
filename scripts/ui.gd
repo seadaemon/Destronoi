@@ -1,7 +1,6 @@
 extends Control
 """
-Author: George Power
-		<georgepower@cmail.carleton.ca>
+Author: George Power <george@georgepower.dev>
 """
 
 @onready var fps_label : RichTextLabel = get_node("VBoxContainer2/FPS Label")

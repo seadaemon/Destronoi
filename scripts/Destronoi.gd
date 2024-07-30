@@ -2,9 +2,7 @@
 class_name Destronoi extends Node
 const Laterality = preload("res://scripts/Laterality.gd")
 """
-Author: 
-	George Power 
-	<georgepower@cmail.carleton.ca>
+Author: George Power <george@georgepower.dev>
 """
 ## Creates a binary Voronoi Subdivision Tree (VST) from a sibling MeshInstance3D node
 ##

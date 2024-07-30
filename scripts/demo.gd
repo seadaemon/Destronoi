@@ -1,6 +1,6 @@
 extends Node3D
 """
-Author: George Power <admin@georgepower.dev>
+Author: George Power <george@georgepower.dev>
 """
 ## Script for the Demo scene; to showcase and test destructible objects
 
