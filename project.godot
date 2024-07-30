@@ -24,6 +24,10 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/vsync/vsync_mode=0
 
+[dotnet]
+
+project/assembly_name="Destronoi"
+
 [editor_plugins]
 
 enabled=PackedStringArray()

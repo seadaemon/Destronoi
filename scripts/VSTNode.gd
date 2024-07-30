@@ -1,26 +1,26 @@
 class_name VSTNode
-const Laterality = preload("res://scripts/Laterality.gd")
 """
-Author: George Power
-		<georgepower@cmail.carleton.ca>
+Author: George Power <admin@georgepower.dev>
 """
 ## A node in a Voronoi Subdivision Tree
 ##
-## Only supports a binary tree (at most 2 children/node), a given node has:
+## Limited to binary trees (1-2 children per node)
+## An individual node has:
 ## - A MeshInstance3D to derive the mesh data
-## - Two sites to defiane a bisector plane
+## - Two sites to define a bisector plane
 ## - Two children, left and right, nodes in the binary tree
 
+const Laterality = preload("res://scripts/Laterality.gd")
 var _mesh_instance: MeshInstance3D = null
 var _sites: PackedVector3Array = []
 var _left: VSTNode = null
 var _right: VSTNode = null
-#var _parent: VSTNode = null
 var _level: int = 0
 var _laterality: int = Laterality.NONE
+
 ## === METHODS ===
-	
-## VSTNode initialization requires some base mesh to be provided
+
+## A base mesh to be provided
 func _init(mesh_instance: MeshInstance3D, level: int = 0, lat: int = Laterality.NONE):
 	_mesh_instance = mesh_instance
 	_level = level

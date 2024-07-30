@@ -272,3 +272,68 @@ func bisect(vst_node: VSTNode):
 	vst_node._right = VSTNode.new(mesh_instance_below, vst_node._level + 1, Laterality.RIGHT)
 	
 	return "Bisection successful!"
+
+func destroy(left_val: int = 1, right_val: int = 1):
+	var base_object = get_parent()
+	var vst_leaves := []
+	var current_node: VSTNode = _root
+	current_node.get_left_leaf_nodes(current_node, vst_leaves, left_val)
+	current_node.get_right_leaf_nodes(current_node, vst_leaves, right_val)
+	
+	var new_rigid_bodies := []
+	var sum_mass = 0
+	
+	for vst_leaf in range(vst_leaves.size()):
+		var new_body: RigidBody3D = RigidBody3D.new()
+		new_body.name = "VFragment_{id}".format({"id": vst_leaf})
+		
+		new_body.position = base_object.transform.origin
+		
+		var new_mesh_instance = vst_leaves[vst_leaf]._mesh_instance
+		new_mesh_instance.name = "MeshInstance3D"
+		new_body.add_child(new_mesh_instance)
+		
+		# Create collision geometry
+		var new_body_mesh_instance : MeshInstance3D = new_body.get_child(0)
+		var new_collision_shape: CollisionShape3D = CollisionShape3D.new()
+		new_collision_shape.name = "CollisionShape3D"
+
+		var velocity_dir = new_body_mesh_instance.mesh.get_aabb().get_center() - base_object.position;
+		velocity_dir = velocity_dir.normalized()
+		
+		new_body.mass = max(new_body_mesh_instance.mesh.get_aabb().get_volume(),0.1)
+		sum_mass += new_body.mass
+		
+		# find the vector pointing from the base object's center, to the new fragment's center
+		# fragments should go outward, as if the object has combusted
+		var endpoints = []
+		var estim_dir = Vector3(0,0,0)
+		for i in range(8):
+			var current_endpoint = new_body.get_node("MeshInstance3D").mesh.get_aabb().get_endpoint(i)
+			current_endpoint = current_endpoint.normalized()
+			var current_dot = current_endpoint.dot(base_object.transform.origin.normalized())
+			if abs(current_dot) > 0.0:
+				endpoints.append(current_endpoint)
+		
+		for x in range(endpoints.size()):
+			estim_dir += endpoints[x]
+			
+		if(endpoints.size() > 0):
+			estim_dir /= endpoints.size()
+		
+		estim_dir = estim_dir.normalized()
+		new_body.set_axis_velocity(10.0 * estim_dir)
+		#new_body.angular_velocity = Vector3(randfn(2.0, 2.0), randfn(2.0, 2.0), randfn(2.0, 2.0)).normalized()
+		
+		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
+		
+		new_body.add_child(new_collision_shape)
+		new_rigid_bodies.append(new_body)
+	
+	for body in new_rigid_bodies:
+		# scale masses to match the base object
+		body.mass = body.mass * (base_object.mass/sum_mass)
+		base_object.get_parent().add_child(body)
+	
+	base_object.free()
+	#print("destroy")
