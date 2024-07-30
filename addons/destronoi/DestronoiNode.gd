@@ -1,5 +1,4 @@
 @tool
-#@icon("./destronoi_icon.svg")
 extends Node
 class_name DestronoiNode
 const Laterality = preload("./Laterality.gd")

@@ -1,4 +1,5 @@
 extends Control
+@warning_ignore("unused_parameter")
 """
 Author: George Power <george@georgepower.dev>
 """
@@ -10,8 +11,5 @@ func _ready():
 	var version_label : RichTextLabel = get_node("TopContainer/VBoxContainer/Version Label")
 	version_label.text = "Destronoi [i]v" + ProjectSettings.get_setting("application/config/version", "") + "[/i]"
 
-func _process(delta):
+func _process(_delta):
 	fps_label.text = "[right]%3d FPS[/right]" % int(Engine.get_frames_per_second())
-
-func _gui_input(event):
-	pass

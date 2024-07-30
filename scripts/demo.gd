@@ -24,7 +24,7 @@ func _ready():
 	base_object = demo_objects[0]
 	
 # handle user input
-func _process(delta):
+func _process(_delta):
 	if(Input.is_action_just_pressed("toggle_draw_wireframe")):
 		if(get_viewport().debug_draw == Viewport.DEBUG_DRAW_WIREFRAME):
 			get_viewport().debug_draw = Viewport.DEBUG_DRAW_DISABLED
