@@ -2,7 +2,9 @@ extends Node3D
 """
 Author: George Power <george@georgepower.dev>
 """
-## Script for the Demo scene; to showcase and test destructible objects
+## Demonstration of a rigid body being fragmented and replaced by its fragments
+## The fragments can be deleted and a new instance of the orignal object can be added,
+## with its own distinct fragmentation pattern (at random)
 
 var base_object: RigidBody3D # The object to be destroyed
 var demo_objects = [] # objects at the start of the scene
@@ -12,14 +14,14 @@ var cylinder = preload("res://scenes/cylinder.tscn")
 var cylinder_instance = cylinder.instantiate()
 var sphere = preload("res://scenes/sphere.tscn")
 var sphere_instance = sphere.instantiate()
+@onready var left_spin: SpinBox = $UI/TopContainer/VBoxContainer/SpinLeft
+@onready var right_spin: SpinBox = $UI/TopContainer/VBoxContainer/SpinRight
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	RenderingServer.set_debug_generate_wireframes(true)
-	# set the destructible objects
+	# set the destructible object(s)
 	get_node("Destructibles").add_child(sphere_instance)
-	#get_node("Destructibles").add_child(cylinder_instance)
-	#get_node("Destructibles").add_child(cube_instance)
 	demo_objects = get_node("Destructibles").get_children()
 	base_object = demo_objects[0]
 	
@@ -49,7 +51,12 @@ func _process(_delta):
 		if(base_object != null):
 			
 			var destronoi: DestronoiNode = base_object.get_node("DestronoiNode")
-			destronoi.destroy(1,1)
+			destronoi.destroy(int(left_spin.value) , int(right_spin.value))
 	
 	if(Input.is_action_just_pressed("reload_scene")):
-		get_tree().reload_current_scene()
+		for n in get_node("Destructibles").get_children():
+			get_node("Destructibles").remove_child(n)
+			n.free()
+		get_node("Destructibles").add_child(sphere.instantiate())
+		demo_objects = get_node("Destructibles").get_children()
+		base_object = demo_objects[0]

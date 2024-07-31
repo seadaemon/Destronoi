@@ -37,6 +37,7 @@ bbcode_enabled = true
 text = "R - Reload scene
 T - Destroy
 G  - Toggle wireframe
+H - Toggle overdraw
 O - Unpause
 P - Pause/Step"
 fit_content = true

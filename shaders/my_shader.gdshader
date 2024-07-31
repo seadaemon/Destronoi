@@ -1,13 +1,13 @@
 shader_type spatial;
 //render_mode diffuse_toon;
-//render_mode specular_toon;
-render_mode wireframe;
+render_mode specular_toon;
+//render_mode wireframe;
 void vertex() {
 	// Called for every vertex the material is visible on.
 }
 
 void fragment() {
-	ALBEDO = vec3(0,0,0);
+	ALBEDO = vec3(1,0,0);
 	// Called for every pixel the material is visible on.
 }
 

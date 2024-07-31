@@ -1,23 +1,22 @@
 @tool
 extends Node
+## Creates a binary Voronoi Subdivision Tree (VST) from a sibling MeshInstance3D node
+##
+## To use the Destronoi node, it must be a child of a RigidBody3D with a single
+## MeshInstance3D as a child. The Mesh associated with the MeshInstance3D MUST
+## be ArrayMesh or the script will not work. When the Destronoi node is loaded
+## it will create a VST which is accessible through the _root.
 class_name DestronoiNode
-const Laterality = preload("./Laterality.gd")
 """
 Author: George Power <george@georgepower.dev>
 """
-## Creates a binary Voronoi Subdivision Tree (VST) from a sibling MeshInstance3D node
-##
-## INTENDED USE:
-## To use the Destronoi node, it must be a child of a RigidBody3D with a single
-## MeshInstance3D as a child. The Mesh associated with the MeshInstance3D MUST
-## be ArrayMesh or the script will not work.
-## 
-## When the Destronoi node is loaded it will create a VST which is accessible
-## through the _root.
 
+## The laterality enum
+const Laterality = preload("./Laterality.gd")
 
-## Root node of the Voronoi Subdivision Tree
+## The root node of the VST
 var _root: VSTNode = null
+
 ## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
 @export_range(1,14) var tree_height: int = 1
 
@@ -261,7 +260,6 @@ func bisect(vst_node: VSTNode):
 	
 	# Assign new meshes to left and right nodes
 	# Left is above, right is below; this decision was arbitrary
-	
 	var mesh_instance_above := MeshInstance3D.new()
 	mesh_instance_above.mesh = surface_tool_a.commit()
 	vst_node._left = VSTNode.new(mesh_instance_above, vst_node._level + 1, Laterality.LEFT)
@@ -272,6 +270,8 @@ func bisect(vst_node: VSTNode):
 	
 	return "Bisection successful!"
 
+## Replaces the rigid body with a specified number of fragments
+## [color=yellow]Warning:[/color] You must have left and right values of 1 or greater
 func destroy(left_val: int = 1, right_val: int = 1):
 	var base_object = get_parent()
 	var vst_leaves := []
@@ -335,4 +335,3 @@ func destroy(left_val: int = 1, right_val: int = 1):
 		base_object.get_parent().add_child(body)
 	
 	base_object.free()
-	#print("destroy")

@@ -1,5 +1,4 @@
 extends Control
-@warning_ignore("unused_parameter")
 """
 Author: George Power <george@georgepower.dev>
 """
