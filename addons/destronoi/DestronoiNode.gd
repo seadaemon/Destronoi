@@ -1,18 +1,19 @@
 @tool
 extends Node
+class_name DestronoiNode
+"""
+Author: George Power <george@georgepower.dev>
+"""
 ## Creates a binary Voronoi Subdivision Tree (VST) from a sibling MeshInstance3D node
 ##
 ## To use the Destronoi node, it must be a child of a RigidBody3D with a single
 ## MeshInstance3D as a child. The Mesh associated with the MeshInstance3D MUST
 ## be ArrayMesh or the script will not work. When the Destronoi node is loaded
 ## it will create a VST which is accessible through the _root.
-class_name DestronoiNode
-"""
-Author: George Power <george@georgepower.dev>
-"""
 
-## The laterality enum
-const Laterality = preload("./Laterality.gd")
+## An enum to define laterality. A root VSTNode would have no laterality as it
+## has no parent VSTNodes. Any child VSTNode must have a laterality of left or right.
+enum Laterality {NONE = 0, LEFT, RIGHT}
 
 ## The root node of the VST
 var _root: VSTNode = null

@@ -58,7 +58,7 @@ scroll_active = false
 layout_mode = 2
 min_value = 1.0
 max_value = 5.0
-value = 1.0
+value = 3.0
 
 [node name="SpinRightLabel" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
 layout_mode = 2
@@ -71,7 +71,7 @@ scroll_active = false
 layout_mode = 2
 min_value = 1.0
 max_value = 5.0
-value = 1.0
+value = 3.0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="."]
 layout_mode = 2
