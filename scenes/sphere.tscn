@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://d37qh7bef0ru5"]
 
-[ext_resource type="ArrayMesh" uid="uid://b4nxsrkjdqmqj" path="res://assets/icosphere.obj" id="1_kf61c"]
+[ext_resource type="ArrayMesh" uid="uid://berhmd5co31nd" path="res://assets/icosphere.obj" id="1_kf61c"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_lnldb"]
 [ext_resource type="Script" path="res://addons/destronoi/DestronoiNode.gd" id="3_ykljg"]
 

@@ -34,7 +34,7 @@ autowrap_mode = 0
 [node name="Control Label" type="RichTextLabel" parent="TopContainer/VBoxContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "R - Reload scene
+text = "R - Respawn object
 T - Destroy
 G  - Toggle wireframe
 H - Toggle overdraw
