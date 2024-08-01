@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://d37qh7bef0ru5"]
 
-[ext_resource type="ArrayMesh" uid="uid://wkudplyhyqa8" path="res://assets/icosphere.obj" id="1_kf61c"]
+[ext_resource type="ArrayMesh" uid="uid://b4nxsrkjdqmqj" path="res://assets/icosphere.obj" id="1_kf61c"]
 [ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_lnldb"]
 [ext_resource type="Script" path="res://addons/destronoi/DestronoiNode.gd" id="3_ykljg"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_oo6ir"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uknup"]
 render_priority = 0
 shader = ExtResource("2_lnldb")
 
@@ -17,7 +17,7 @@ mass = 50.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = ExtResource("1_kf61c")
-surface_material_override/0 = SubResource("ShaderMaterial_oo6ir")
+surface_material_override/0 = SubResource("ShaderMaterial_uknup")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("ConvexPolygonShape3D_h1nh0")

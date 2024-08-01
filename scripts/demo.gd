@@ -15,7 +15,7 @@ var sphere = preload("res://scenes/sphere.tscn")
 @onready var right_spin: SpinBox = $UI/TopContainer/VBoxContainer/SpinRight
 
 var destructible_object = sphere
-var combust_velocity: float = 0.0
+var combust_velocity: float = 10.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
