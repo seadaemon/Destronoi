@@ -5,11 +5,11 @@ Author: George Power <george@georgepower.dev>
 """
 ## A node in a Voronoi Subdivision Tree.
 ##
-## Despite the name, VSTNodes do not inheret from the Godot Node class and
-## therefore cannot be used as scene objects. VSTNodes are used in the 
-## construction of VSTs. A VSTNode represents a mesh data object (MeshInstance3D)
-## and its relation to a single parent VSTNode and up to two child VSTNodes.
-## If a VSTNode has no children then it is considered a leaf.
+## Despite the name, [VSTNode] does [b]not[/b] inheret from [Node] and
+## therefore cannot be used as a scene object. A [VSTNode] is used in the 
+## construction of a Voronoi Subdivison Tree (VST). A VST functions as a binary
+## tree where a [VSTNode] contains a [MeshInstance3D] and 0 to 2 children. A 
+## [VSTNode] without children is considered a leaf.
 
 ## An enum to define laterality. A root VSTNode would have no laterality as it
 ## has no parent VSTNodes. Any child VSTNode must have a laterality of left or right.
@@ -36,18 +36,24 @@ func _init(mesh_instance: MeshInstance3D, level: int = 0, lat: int = Laterality.
 	_level = level
 	_laterality = lat
 
-## Return surface material override, for a specific index (0 default)
-## returns null if index is out of bounds
+## Returns the [Material] for a specified surface by index (0 by default).
+## Returns [code]null[/code] if index is out of bounds.
 func get_override_material(index: int = 0):
 	if index > _mesh_instance.get_surface_override_material_count() - 1: return null 
 	var mat := _mesh_instance.get_surface_override_material(index)
 	return mat
 
-## Return the number of sites
-func get_site_count():
+## Returns the number of sites. Should be 0 or 2, otherwise something has gone wrong.
+func get_site_count() -> int:
 	return _sites.size()
 
-func get_leaf_nodes(root: VSTNode = null, out_arr: Array = []):
+## Recursively populates [param out_arr] with each leaf [VSTNode].
+## [br]Returns an [Array] containing the [VSTNode]s. Returns an empty [Array]
+## if there are no child [VSTNode]s.
+## [br]For proper usage: [br][param root] must be a valid [VSTNode]. [br][param out_arr] must be a valid (preferably empty) [Array]. [br]For instance:
+## [br][code]myVSTNode.get_leaf_nodes()[/code] is improper usage and will return an empty array.
+## [br][code]myVSTNode.get_leaf_nodes(myVSTNode, myArray)[/code] is valid.
+func get_leaf_nodes(root: VSTNode = null, out_arr: Array = []) -> Array:
 	if(root == null):
 		return [];
 	if(root._left == null && root._right == null):
@@ -59,7 +65,17 @@ func get_leaf_nodes(root: VSTNode = null, out_arr: Array = []):
 		get_leaf_nodes(root._right, out_arr)
 	return []
 
-func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0):
+## Recursively populates [param out_arr] with [VSTNode]s of right [enum Laterality] at a certain depth level [param lim].
+## [br]Returns an array containing the leaf VSTNodes. Returns an empty array if
+## there are no child VSTNodes with right [enum Laterality].
+## [br]If [param lim] exceeds the maximum value of [param level], the VSTNodes 
+## with a depth of [param level] will be returned.
+## [br][br]For proper usage: [br][param root] must be a valid VSTNode [br][param level] and [param lim] must be positive integers. [br]For instance:
+## [br][code]myVSTNode.get_right_leaf_nodes()[/code] is improper usage and will return an empty array.
+## [br][code]myVSTNode.get_right_leaf_nodes(myVSTNode, myArray)[/code] is valid.
+## [br][code]myVSTNode.get_right_leaf_nodes(myVSTNode, myArray, 3)[/code] is valid.
+## [br][code]myVSTNode.get_right_leaf_nodes(myVSTNode, myArray, 2, 0)[/code] is valid.
+func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0) -> Array:
 	if(root == null):
 		return [];
 	if(root._left == null && root._right == null) || level == lim:
@@ -70,8 +86,18 @@ func get_right_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 
 	if(root._right != null):
 		get_right_leaf_nodes(root._right, out_arr, lim, level+1)
 	return []
-	
-func get_left_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0):
+
+## Recursively populates [param out_arr] with [VSTNode]s of left [enum Laterality] at a certain depth level [param lim].
+## [br]Returns an array containing the leaf VSTNodes. Returns an empty array if
+## there are no child VSTNodes with left [enum Laterality].
+## [br]If [param lim] exceeds the maximum value of [param level], the VSTNodes 
+## with a depth of [param level] will be returned.
+## [br][br]For proper usage: [br][param root] must be a valid VSTNode [br][param level] and [param lim] must be positive integers. [br]For instance:
+## [br][code]myVSTNode.get_left_leaf_nodes()[/code] is improper usage and will return an empty array.
+## [br][code]myVSTNode.get_left_leaf_nodes(myVSTNode, myArray)[/code] is valid.
+## [br][code]myVSTNode.get_left_leaf_nodes(myVSTNode, myArray, 3)[/code] is valid.
+## [br][code]myVSTNode.get_left_leaf_nodes(myVSTNode, myArray, 2, 0)[/code] is valid.
+func get_left_leaf_nodes(root: VSTNode = null, out_arr: Array = [], lim: int = 1, level: int = 0) -> Array:
 	if(root == null):
 		return [];
 	if(root._left == null && root._right == null) || level == lim:

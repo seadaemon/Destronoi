@@ -43,15 +43,14 @@ func _process(_delta):
 		get_tree().paused = false
 		await get_tree().create_timer(0.05).timeout
 		get_tree().paused = true
+
 	if(Input.is_action_just_pressed("unpause_key")):
 		get_tree().paused = false
 
 	if(Input.is_action_just_pressed("destroy_key")):
-		#print("foo")
 		if(base_object != null):
-			
 			var destronoi: DestronoiNode = base_object.get_node("DestronoiNode")
-			destronoi.destroy(int(left_spin.value) , int(right_spin.value))
+			destronoi.destroy(int(left_spin.value) , int(right_spin.value), true)
 	
 	if(Input.is_action_just_pressed("reload_scene")):
 		for n in get_node("Destructibles").get_children():

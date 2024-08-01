@@ -4,24 +4,27 @@ class_name DestronoiNode
 """
 Author: George Power <george@georgepower.dev>
 """
-## Creates a binary Voronoi Subdivision Tree (VST) from a sibling MeshInstance3D node
+## Subdivides a convex [ArrayMesh] belonging to a [RigidBody3D] by generating a Voronoi Subdivision Tree (VST).
 ##
-## To use the Destronoi node, it must be a child of a RigidBody3D with a single
-## MeshInstance3D as a child. The Mesh associated with the MeshInstance3D MUST
-## be ArrayMesh or the script will not work. When the Destronoi node is loaded
-## it will create a VST which is accessible through the _root.
+## A [DestronoiNode] must be a child of a [RigidBody3D] with a single
+## [MeshInstance3D] as a sibling. The [MeshInstance3D] must have the default name
+## "MeshInstance3D". The mesh data [b]must[/b] be an [ArrayMesh]. Using an imported
+## mesh as an [code].obj[/code] file should suffice. When the Destronoi node is loaded
+## it will create a VST which is accessible through the [param _root].
+## [br]See the demo scene for an example.
 
 ## An enum to define laterality. A root VSTNode would have no laterality as it
 ## has no parent VSTNodes. Any child VSTNode must have a laterality of left or right.
 enum Laterality {NONE = 0, LEFT, RIGHT}
 
-## The root node of the VST
+## The root node of the VST. Contains a copy of the sibling [MeshInstance3D]. 
 var _root: VSTNode = null
 
-## The height of the Voronoi Subdivision Tree. There are 2^n fragments, where n is the height of the tree.
-@export_range(1,14) var tree_height: int = 1
+## The [DestronoiNode] generates [code]2^n[/code] fragments, where [code]n[/code] is the [param tree_height] of the VST.
+@export_range(1,8) var tree_height: int = 1
 
-# By default, a mesh must be bisected once
+## Initializes the [param _root] with a copy of the sibling [MeshInstance3D].
+## The mesh is subdivided according to the [param tree_height].
 func _ready():
 	# Set root geometry to sibling MeshInstance3D
 	_root = VSTNode.new(get_parent().get_node("MeshInstance3D"))
@@ -29,7 +32,6 @@ func _ready():
 	plot_sites_random(_root)
 	# Generate 2 children from the root
 	bisect(_root)
-	
 	# Perform additional subdivisions depending on tree height
 	for i in range(tree_height - 1):
 		var leaves = []
@@ -38,14 +40,16 @@ func _ready():
 			plot_sites_random(leaves[leaf])
 			bisect(leaves[leaf])
 
-
-## Manually plot sites for the subdivision; 
-## Site coordinates are relative to the centre of the mesh; Overwrites existing sites
+## Assigns data to [method VSTNode._sites] of a specified [VSTNode].
+## [br][color=yellow]Note:[/color] Site coordinates are relative to the centre of [member VSTNode._mesh_instance].
+## [br][color=yellow]Note:[/color] Reusing this method will overwrite any existing sites.
 func plot_sites(vst_node: VSTNode, site1: Vector3, site2: Vector3):
 	vst_node._sites = [vst_node._mesh_instance.position + site1, vst_node._mesh_instance.position + site2]
 
-## Randomly plot sites for the subdivision using rejection sampling
-## Site coordinates are relative to the centre of the mesh; Overwrites existing sites
+## Randomly plots a pair of valid sites using rejection sampling. A site is
+## considered valid if it falls within the volume of the [member VSTNode._mesh_instance].
+## [br][color=yellow]Note:[/color] Site coordinates are relative to the centre of [member VSTNode._mesh_instance].
+## [br][color=yellow]Note:[/color] Reusing this method will overwrite any existing sites.
 func plot_sites_random(vst_node: VSTNode):
 	vst_node._sites = [] # clear existing sites
 
@@ -65,7 +69,6 @@ func plot_sites_random(vst_node: VSTNode):
 	var avg_x = (max_vec.x + min_vec.x)/2.0
 	var avg_y = (max_vec.y + min_vec.y)/2.0
 	var avg_z = (max_vec.z + min_vec.z)/2.0
-	
 	
 	var dev = 0.1 # deviation from the mean
 	var num_intersections = 0
@@ -91,15 +94,21 @@ func plot_sites_random(vst_node: VSTNode):
 		if(num_intersections == 1): # must be inside; add
 			vst_node._sites.append(site)
 
-## Bisect the mesh of a VSTNode. Will return an error if there are fewer than 2 sites
-## Will overrite children if they already exist
-func bisect(vst_node: VSTNode):
+## Bisects the [MeshInstance3D] of a [VSTNode] and creates 2 child [VSTNodes] to
+## store the new geometry.
+## [br]If bisection is successful returns [code]true[/code].
+## [br]If bisection fails returns [code]false[/code].
+## [color=yellow]Warning:[/color] Will overrite any existing children.
+func bisect(vst_node: VSTNode) -> bool:
 	# Colors for the new geometry
-	var outer_colors = [Color.NAVAJO_WHITE]
-	var inner_color := (Color.DEEP_SKY_BLUE)
+	# These colors are assigned to new vertices and may be used for a simple
+	# distinction between interior and exterior faces. Example use in the debug.gdshader file.
+	var outer_colors = [Color.WHITE]
+	var inner_color := Color.RED
 	
+	# Bisection aborted! Must have exactly 2 sites
 	if vst_node.get_site_count() != 2 :
-		return "Bisection aborted! Must have exactly 2 sites"
+		return false
 	
 	# Create the plane
 	# Equidistant from both sites; normal vector towards to site B
@@ -269,11 +278,17 @@ func bisect(vst_node: VSTNode):
 	mesh_instance_below.mesh = surface_tool_b.commit()
 	vst_node._right = VSTNode.new(mesh_instance_below, vst_node._level + 1, Laterality.RIGHT)
 	
-	return "Bisection successful!"
+	return true
 
-## Replaces the rigid body with a specified number of fragments
-## [color=yellow]Warning:[/color] You must have left and right values of 1 or greater
-func destroy(left_val: int = 1, right_val: int = 1):
+## Replaces the [RigidBody3D] with a specified number of fragments.
+## [br]If [param combust] is [code]true[/code] fragments will accelerate 
+## outward from the centre of the object.
+## [br]If [param combust] is [code]false[/code] fragments will not be accelerated.
+## [br][param left_val] and [param right_val] specify the depth level of the
+## fragments. E.g. if both values are 1, only fragments from the 1st level will
+## be used, resulting in 2 fragments being placed.
+## [br][color=yellow]Warning:[/color] You must have left and right values of 1 or greater.
+func destroy(left_val: int = 1, right_val: int = 1, combust: bool = false):
 	var base_object = get_parent()
 	var vst_leaves := []
 	var current_node: VSTNode = _root
@@ -304,34 +319,36 @@ func destroy(left_val: int = 1, right_val: int = 1):
 		new_body.mass = max(new_body_mesh_instance.mesh.get_aabb().get_volume(),0.1)
 		sum_mass += new_body.mass
 		
+		# Combustion calculations:
 		# find the vector pointing from the base object's center, to the new fragment's center
 		# fragments should go outward, as if the object has combusted
-		var endpoints = []
-		var estim_dir = Vector3(0,0,0)
-		for i in range(8):
-			var current_endpoint = new_body.get_node("MeshInstance3D").mesh.get_aabb().get_endpoint(i)
-			current_endpoint = current_endpoint.normalized()
-			var current_dot = current_endpoint.dot(base_object.transform.origin.normalized())
-			if abs(current_dot) > 0.0:
-				endpoints.append(current_endpoint)
-		
-		for x in range(endpoints.size()):
-			estim_dir += endpoints[x]
+		if(combust == true):
+			var endpoints = []
+			var estim_dir = Vector3(0,0,0)
+			for i in range(8):
+				var current_endpoint = new_body.get_node("MeshInstance3D").mesh.get_aabb().get_endpoint(i)
+				current_endpoint = current_endpoint.normalized()
+				var current_dot = current_endpoint.dot(base_object.transform.origin.normalized())
+				if abs(current_dot) > 0.0:
+					endpoints.append(current_endpoint)
 			
-		if(endpoints.size() > 0):
-			estim_dir /= endpoints.size()
-		
-		estim_dir = estim_dir.normalized()
-		new_body.set_axis_velocity(10.0 * estim_dir)
-		#new_body.angular_velocity = Vector3(randfn(2.0, 2.0), randfn(2.0, 2.0), randfn(2.0, 2.0)).normalized()
+			for x in range(endpoints.size()):
+				estim_dir += endpoints[x]
+				
+			if(endpoints.size() > 0):
+				estim_dir /= endpoints.size()
+			
+			estim_dir = estim_dir.normalized()
+			
+			new_body.set_axis_velocity(10.0 * estim_dir)
 		
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		
 		new_body.add_child(new_collision_shape)
 		new_rigid_bodies.append(new_body)
 	
+	# scale masses to match the base object
 	for body in new_rigid_bodies:
-		# scale masses to match the base object
 		body.mass = body.mass * (base_object.mass/sum_mass)
 		base_object.get_parent().add_child(body)
 	

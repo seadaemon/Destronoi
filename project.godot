@@ -80,6 +80,7 @@ toggle_draw_overdraw={
 
 [rendering]
 
-lights_and_shadows/positional_shadow/soft_shadow_filter_quality=5
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
 environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 anti_aliasing/quality/use_debanding=true

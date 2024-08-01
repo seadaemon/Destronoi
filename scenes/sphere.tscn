@@ -1,12 +1,12 @@
 [gd_scene load_steps=6 format=3 uid="uid://d37qh7bef0ru5"]
 
 [ext_resource type="ArrayMesh" uid="uid://wkudplyhyqa8" path="res://assets/icosphere.obj" id="1_kf61c"]
-[ext_resource type="Shader" path="res://shaders/my_shader.gdshader" id="2_cojqu"]
+[ext_resource type="Shader" path="res://shaders/debug.gdshader" id="2_lnldb"]
 [ext_resource type="Script" path="res://addons/destronoi/DestronoiNode.gd" id="3_ykljg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oo6ir"]
 render_priority = 0
-shader = ExtResource("2_cojqu")
+shader = ExtResource("2_lnldb")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_h1nh0"]
 points = PackedVector3Array(-0.348694, -0.0303183, -0.882662, 0.0470623, 0.0609885, 0.976581, 0.168311, 0.0302472, 0.941279, 0.0771223, 0.971836, -0.030251, 0.928048, -0.0302668, -0.334076, -0.0443292, -0.974851, 0.0608805, -0.922009, 0.0603123, 0.332856, 0.928048, -0.0302668, 0.334076, -0.255584, 0.544041, -0.786132, 0.258927, -0.485102, -0.818444, -0.678077, -0.513259, -0.513259, -0.678076, -0.513258, 0.513258, 0.412681, -0.853472, 0.304798, -0.41036, 0.853589, 0.304908, 0.647225, 0.540839, 0.510719, 0.679527, 0.512487, -0.512487, -0.741806, 0.454755, -0.454945, 0.258059, -0.543855, 0.78559, -0.256507, 0.485349, 0.819181, 0.412681, -0.853472, -0.304798, 0.53427, 0.0303446, -0.822358, 0.836157, -0.516047, 0.0606779, -0.529911, -0.0606851, 0.819724, -0.195416, -0.8168, -0.514267, 0.869222, 0.456838, 0.0608735, 0.168593, 0.851591, 0.486678, -0.860076, -0.453324, -0.0905134, -0.41036, 0.853589, -0.304908, -0.500486, -0.85161, -0.030299, -0.195415, -0.816798, 0.514266, 0.717291, -0.457027, -0.517925, 0.197657, 0.815842, -0.513664)
@@ -24,4 +24,4 @@ shape = SubResource("ConvexPolygonShape3D_h1nh0")
 
 [node name="DestronoiNode" type="Node" parent="."]
 script = ExtResource("3_ykljg")
-tree_height = 3
+tree_height = 5
