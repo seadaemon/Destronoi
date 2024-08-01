@@ -15,7 +15,7 @@ var sphere = preload("res://scenes/sphere.tscn")
 @onready var right_spin: SpinBox = $UI/TopContainer/VBoxContainer/SpinRight
 
 var destructible_object = sphere
-var combust = true
+var combust_velocity: float = 0.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -50,7 +50,7 @@ func _process(_delta):
 	if(Input.is_action_just_pressed("destroy_key")):
 		if(base_object != null):
 			var destronoi: DestronoiNode = base_object.get_node("DestronoiNode")
-			destronoi.destroy(int(left_spin.value) , int(right_spin.value), combust)
+			destronoi.destroy(int(left_spin.value) , int(right_spin.value), combust_velocity)
 	
 	if(Input.is_action_just_pressed("reload_scene")):
 		for n in get_node("Destructibles").get_children():

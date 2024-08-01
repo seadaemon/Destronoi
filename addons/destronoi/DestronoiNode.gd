@@ -281,14 +281,14 @@ func bisect(vst_node: VSTNode) -> bool:
 	return true
 
 ## Replaces the [RigidBody3D] with a specified number of fragments.
-## [br]If [param combust] is [code]true[/code] fragments will accelerate 
-## outward from the centre of the object.
-## [br]If [param combust] is [code]false[/code] fragments will not be accelerated.
+## [br]If [param combust_velocity][code] > 0.0[/code] fragments will accelerate 
+## outward from the centre of the object with a velocity equal to [param combust_velocity].
+## [br]If [param combust_velocity][code] == 0.0[/code] fragments will not be accelerated.
 ## [br][param left_val] and [param right_val] specify the depth level of the
 ## fragments. E.g. if both values are 1, only fragments from the 1st level will
 ## be used, resulting in 2 fragments being placed.
 ## [br][color=yellow]Warning:[/color] You must have left and right values of 1 or greater.
-func destroy(left_val: int = 1, right_val: int = 1, combust: bool = false):
+func destroy(left_val: int = 1, right_val: int = 1, combust_velocity: float = 0.0):
 	var base_object = get_parent()
 	var vst_leaves := []
 	var current_node: VSTNode = _root
@@ -322,7 +322,7 @@ func destroy(left_val: int = 1, right_val: int = 1, combust: bool = false):
 		# Combustion calculations:
 		# find the vector pointing from the base object's center, to the new fragment's center
 		# fragments should go outward, as if the object has combusted
-		if(combust == true):
+		if(!is_zero_approx(combust_velocity)):
 			var endpoints = []
 			var estim_dir = Vector3(0,0,0)
 			for i in range(8):
@@ -340,7 +340,7 @@ func destroy(left_val: int = 1, right_val: int = 1, combust: bool = false):
 			
 			estim_dir = estim_dir.normalized()
 			
-			new_body.set_axis_velocity(10.0 * estim_dir)
+			new_body.set_axis_velocity(combust_velocity * estim_dir)
 		
 		new_collision_shape.shape = new_body_mesh_instance.mesh.create_convex_shape(false,false)
 		
