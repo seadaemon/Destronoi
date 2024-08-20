@@ -27,7 +27,18 @@ var _root: VSTNode = null
 ## The mesh is subdivided according to the [param tree_height].
 func _ready():
 	# Set root geometry to sibling MeshInstance3D
-	_root = VSTNode.new(get_parent().get_node("MeshInstance3D"))
+	var parent = get_parent()
+	var mesh_instance = null
+	for child in parent.get_children():
+		if(child is MeshInstance3D):
+			mesh_instance = child
+			break
+	
+	if(mesh_instance == null):
+		print("[Destronoi] No MeshInstance3D sibling found")
+		return # no mesh; return early
+	_root = VSTNode.new(mesh_instance)
+	
 	# Plot 2 sites for the subdivision
 	plot_sites_random(_root)
 	# Generate 2 children from the root
