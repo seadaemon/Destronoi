@@ -57,6 +57,15 @@ The `destroy(left_val, right_val, combust_velocity)` function takes three parame
 
 For easy clean-up, I recommend making the destructible `RigidBody3D` a child of a `Node` so that fragments can be deleted in a convenient fashion. 
 
+## Appendix
+A cylinder exploding into many pieces
+![Red cylinder exploding](./height9cyl.png)
+
+Below is a performance chart where I used three different (yet simple) polyhedra. Notice how tree height causes generation time to increase exponentially.
+
+CPU: AMD Ryzen 7 7745HX 3.6GHz 
+![Relationship between Tree Height and VST Generation Time](./loadtimechart.png)
+
 ### References
 [1] M. M. Clothier and M. Bailey, “Creating Destructible Objects Using a 3D Voronoi Subdivison Tree,” in *2015 15th International Conference on Computational Science and Its Applications*, Banff, AB, Canada: IEEE,
 Jun. 2015, pp. 42–46, isbn: 978-1-4673-7367-8. doi: 10.1109/ICCSA.2015.26. [Online]. Available: http://ieeexplore.ieee.org/document/7166162/ (visited on 01/15/2024).
