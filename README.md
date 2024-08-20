@@ -2,8 +2,6 @@
 
 Destronoi is an plugin for Godot 4.2.x that allows for the fragmentation of [RigidBody3D](https://docs.godotengine.org/en/stable/classes/class_rigidbody3d.html) objects. When triggered, the object can be swapped out with pseudorandomly generated fragments to simulate destruction. Destronoi is a portmanteau of "destroy" and "Voronoi," as the fragmentation algorithm is based on Voronoi cells.
 
-A demonstration of this plugin can be found [here](https://www.google.com).
-
 <font color="yellow">**WARNING:**</font> This plugin is currently in **beta** and is likely to contain bugs, which may negatively impact performance under certain circumstances.
 
 ### Acknowledgements
